@@ -3,13 +3,56 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="增值税发票" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="审批人">
-            <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+          <el-form-item label="价税最低值">
+            <el-input v-model="formInline.user" placeholder="请输入最低值"></el-input>
           </el-form-item>
-          <el-form-item label="活动区域">
-            <el-select v-model="formInline.region" placeholder="活动区域">
+          <el-form-item label="价税最高值">
+            <el-input v-model="formInline.user" placeholder="请输入最高值"></el-input>
+          </el-form-item>
+          <el-form-item label="发票类型">
+            <el-select v-model="formInline.region" placeholder="请选择">
               <el-option label="区域一" value="shanghai"></el-option>
               <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="标签">
+            <el-select v-model="formInline.region" placeholder="请选择">
+              <el-option label="区域一" value="shanghai"></el-option>
+              <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="录入时间">
+            <el-date-picker
+              v-model="value2"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item label="查验结果">
+            <el-select v-model="formInline.region" placeholder="请选择">
+              <el-option label="区域一" value="shanghai"></el-option>
+              <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="作废标识">
+            <el-select v-model="formInline.region" placeholder="请选择">
+              <el-option label="区域一" value="shanghai"></el-option>
+              <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select v-model="value1" multiple placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -31,7 +74,21 @@
 export default {
   data() {
     return {
-      activeName: "second",
+      value2: "",
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
+      activeName: "first",
       formInline: {
         user: "",
         region: ""
@@ -83,8 +140,7 @@ export default {
 .el-table .success-row {
   background: #f0f9eb;
 }
-.app-main{
-    background: #f0f6fa;
-
+.app-main {
+  background: #f0f6fa;
 }
 </style>
