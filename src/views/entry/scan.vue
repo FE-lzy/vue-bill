@@ -4,6 +4,13 @@
       <el-col :span="12">
         <div class="grid-content bg-purple">
           <img src="@/assets/404_images/404.png" style="width:100%" />
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入内容"
+            v-model="textarea3"
+          ></el-input>
+          <el-button @click="scanQuery">查询</el-button>
         </div>
       </el-col>
       <el-col :span="12">
@@ -12,24 +19,47 @@
           <el-form
             :model="ruleForm"
             status-icon
-            ref="ruleForm"
+            ref="validForm"
             label-width="100px"
             class="demo-ruleForm form-div"
           >
-            <el-form-item label="发票代码">
-              <el-input type="text" v-model="ruleForm.code" placeholder="输入发票代码"></el-input>
+            <el-form-item
+              label="发票代码"
+              prop="invoiceCode"
+              :rules="[
+                  { required: true, message: '请输入', trigger: 'blur' },
+                ]"
+            >
+              <el-input type="text" v-model="ruleForm.invoiceCode" placeholder="输入发票代码"></el-input>
             </el-form-item>
-            <el-form-item label="发票号码">
-              <el-input type="text" v-model="ruleForm.number" placeholder="输入发票号码"></el-input>
+            <el-form-item
+              label="发票号码"
+              prop="invoiceNumber"
+              :rules="[
+                  { required: true, message: '请输入', trigger: 'blur' },
+                ]"
+            >
+              <el-input type="text" v-model="ruleForm.invoiceNumber" placeholder="输入发票号码"></el-input>
             </el-form-item>
-            <el-form-item label="开票日期">
-              <el-date-picker v-model="ruleForm.date" type="date" placeholder="选择开票日期"></el-date-picker>
+            <el-form-item
+              label="开票日期"
+              prop="billTime"
+              :rules="[
+                  { required: true, message: '请输入', trigger: 'blur' },
+                ]"
+            >
+              <el-date-picker
+                v-model="ruleForm.billTime"
+                type="date"
+                placeholder="选择开票日期"
+                value-format="yyyy-MM-dd"
+              ></el-date-picker>
             </el-form-item>
             <el-form-item label="税前金额">
-              <el-input v-model.number="ruleForm.price" placeholder="输入税前金额"></el-input>
+              <el-input v-model.number="ruleForm.invoiceAmount" placeholder="输入税前金额"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="submitForm('ruleForm')">查验</el-button>
+              <el-button type="primary" @click="submitForm('validForm')">查验</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -45,24 +75,40 @@ export default {
   data() {
     return {
       ruleForm: {
-        code: "",
-        number: "",
-        date: "",
-        price: ""
-      }
+        invoiceCode: "",
+        invoiceNumber: "",
+        billTime: "",
+        invoiceAmount: "",
+        checkCode: "250185"
+      },
+      textarea3:''
     };
   },
-  created() {
-    this.query();
-  },
   methods: {
-    submitForm() {
-      console.log("提交");
-    },
-    query() {
-      queryData('/getToken').then(res => {
-        console.log(res);
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let token = localStorage.getItem("token");
+          let queryparam = Object.assign(this.ruleForm, { token: token });
+          console.log(queryparam);
+          queryData("/queryBill", "post", queryparam).then(res => {
+            console.log(res);
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+        console.log(this.ruleForm);
       });
+    },
+    scanQuery(){
+      let queryparam = {
+        scanStr:this.textarea3,
+        token:localStorage.getItem("token")
+      }
+      queryData("/queryBillByScan", "post", queryparam).then(res => {
+            console.log(res);
+          });
     }
   }
 };

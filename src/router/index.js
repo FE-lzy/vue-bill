@@ -135,18 +135,18 @@ export const constantRoutes = [
         name: '发票查询',
         meta: { title: '发票查询', icon: 'dashboard', affix: true }
       },
-      {
-        path: 'bill_payable',
-        component: () => import('@/views/manager/bill_payable'),
-        name: '抵扣票据',
-        meta: { title: '抵扣票据', icon: 'dashboard', affix: true }
-      },
-      {
-        path: 'rotation_train',
-        component: () => import('@/views/manager/rotation_train'),
-        name: '轮训查验',
-        meta: { title: '轮训查验 ', icon: 'dashboard', affix: true }
-      },
+      // {
+      //   path: 'bill_payable',
+      //   component: () => import('@/views/manager/bill_payable'),
+      //   name: '抵扣票据',
+      //   meta: { title: '抵扣票据', icon: 'dashboard', affix: true }
+      // },
+      // {
+      //   path: 'rotation_train',
+      //   component: () => import('@/views/manager/rotation_train'),
+      //   name: '轮训查验',
+      //   meta: { title: '轮训查验 ', icon: 'dashboard', affix: true }
+      // },
       {
         path: 'bill_setting',
         component: () => import('@/views/manager/bill_setting'),
