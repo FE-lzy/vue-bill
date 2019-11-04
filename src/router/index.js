@@ -68,6 +68,12 @@ export const constantRoutes = [
         meta: { title: '扫描录入', icon: 'dashboard', affix: true }
       },
       {
+        path: 'billResult',
+        component: () => import('@/views/entry/billResult'),
+        name: '结果',
+        meta: { title: '结果', icon: 'dashboard', affix: true }
+      },
+      {
         path: 'other',
         component: () => import('@/views/entry/other'),
         name: '其他发票录入',

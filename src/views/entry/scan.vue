@@ -16,13 +16,30 @@
       <el-col :span="12">
         <div class="grid-content">
           <h2 class="title">手动输入</h2>
+
           <el-form
             :model="ruleForm"
             status-icon
             ref="validForm"
-            label-width="100px"
+            label-width="120px"
             class="demo-ruleForm form-div"
           >
+            <el-form-item
+              label="发票类型"
+              prop="invoiceCode"
+              :rules="[
+                  { required: true, message: '请输入', trigger: 'blur' },
+                ]"
+            >
+              <el-select v-model="billType" @change="getBillType" placeholder="请选择发票类型">
+                <el-option
+                  v-for="item in billOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item
               label="发票代码"
               prop="invoiceCode"
@@ -55,8 +72,23 @@
                 value-format="yyyy-MM-dd"
               ></el-date-picker>
             </el-form-item>
-            <el-form-item label="税前金额">
-              <el-input v-model.number="ruleForm.invoiceAmount" placeholder="输入税前金额"></el-input>
+            <el-form-item
+              label="校验码后六位"
+              v-if="billType == 1 ? true : false"
+              :rules="[
+                  { required: true, message: '请输入', trigger: 'blur' },
+                ]"
+            >
+              <el-input v-model="ruleForm.checkCode" placeholder="输入校验码后六位"></el-input>
+            </el-form-item>
+            <el-form-item
+              label="税前金额"
+              v-if="billType == 2 ? true : false"
+              :rules="[
+                  { required: true, message: '请输入', trigger: 'blur' },
+                ]"
+            >
+              <el-input v-model="ruleForm.invoiceAmount" placeholder="输入税前金额"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="submitForm('validForm')">查验</el-button>
@@ -65,50 +97,75 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog title="结果" width="100%" :visible.sync="dialogTableVisible">
+      <billResult />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { queryData } from "@/api/common";
+import billResult from './billResult';
 export default {
   name: "scan",
   data() {
     return {
       ruleForm: {
-        invoiceCode: "",
-        invoiceNumber: "",
-        billTime: "",
+        invoiceCode: "037001851107",
+        invoiceNumber: "01947559",
+        billTime: "2019-10-4",
         invoiceAmount: "",
         checkCode: "250185"
       },
-      textarea3:''
+      dialogTableVisible:false,
+      textarea3: "",
+      billType: "",
+      billOptions: [
+        {
+          value: "1",
+          label: "普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票"
+        },
+        {
+          value: "2",
+          label: "xx增值税(机动车/二手车销售发票),专用发票"
+        }
+      ]
     };
   },
+  components:{
+    billResult
+  },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          let token = localStorage.getItem("token");
-          let queryparam = Object.assign(this.ruleForm, { token: token });
-          console.log(queryparam);
-          queryData("/queryBill", "post", queryparam).then(res => {
-            console.log(res);
-          });
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-        console.log(this.ruleForm);
-      });
+    getBillType(val) {
+      this.billType = val;
+      console.log("发票类型", this.billType);
     },
-    scanQuery(){
+    submitForm(formName) {
+      this.dialogTableVisible = true
+      // this.$refs[formName].validate(valid => {
+      //   console.log('123');
+      //   if (valid) {
+      //     let token = localStorage.getItem("lsToken");
+      //     let queryparam = Object.assign(this.ruleForm, { token: token });
+      //     console.log(queryparam);
+      //     queryData("/bill/queryBillByCode", queryparam, "post").then(res => {
+      //       console.log(res);
+      //     });
+      //   } else {
+      //     console.log("error submit!!");
+      //     return false;
+      //   }
+      //   console.log(this.ruleForm);
+      // });
+    },
+    scanQuery() {
       let queryparam = {
-        scanStr:this.textarea3,
-        token:localStorage.getItem("token")
-      }
-      queryData("/queryBillByScan", "post", queryparam).then(res => {
-            console.log(res);
-          });
+        scanStr: this.textarea3,
+        token: localStorage.getItem("lsToken")
+      };
+      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
+        console.log(res);
+      });
     }
   }
 };
