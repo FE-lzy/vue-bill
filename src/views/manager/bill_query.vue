@@ -140,7 +140,4 @@ export default {
 .el-table .success-row {
   background: #f0f9eb;
 }
-.app-main {
-  background: #f0f6fa;
-}
 </style>

@@ -113,7 +113,7 @@ export default {
 </script>
 
 <style>
-.form-div-inline {
+/* .form-div-inline {
   margin: 40px;
 }
 .el-form-item__content {
@@ -121,5 +121,5 @@ export default {
 }
 .el-input__inner {
   width: 300px;
-}
+} */
 </style>

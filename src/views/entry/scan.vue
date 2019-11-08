@@ -2,10 +2,11 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="12">
-        <div class="grid-content bg-purple">
-          <img src="@/assets/404_images/404.png" style="width:100%" />
+        <div class="grid-content">
+          <!-- <img src="@/assets/404_images/404.png" style="width:100%" /> -->
           <el-input
             type="textarea"
+            ref="scanStr"
             :autosize="{ minRows: 2, maxRows: 4}"
             placeholder="请输入内容"
             v-model="textarea3"
@@ -97,15 +98,12 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog title="结果" width="100%" :visible.sync="dialogTableVisible">
-      <billResult />
-    </el-dialog>
+    <el-dialog title="结果" width="100%" :visible.sync="dialogTableVisible"></el-dialog>
   </div>
 </template>
 
 <script>
 import { queryData } from "@/api/common";
-import billResult from './billResult';
 export default {
   name: "scan",
   data() {
@@ -117,8 +115,8 @@ export default {
         invoiceAmount: "",
         checkCode: "250185"
       },
-      dialogTableVisible:false,
-      textarea3: "",
+      dialogTableVisible: false,
+      textarea3: "01,04,1100162350,19452405,66.37,20190425,17832785219143376258,A8CC,\n",
       billType: "",
       billOptions: [
         {
@@ -132,8 +130,8 @@ export default {
       ]
     };
   },
-  components:{
-    billResult
+  mounted(){
+    this.$refs.scanStr.focus();
   },
   methods: {
     getBillType(val) {
@@ -141,7 +139,7 @@ export default {
       console.log("发票类型", this.billType);
     },
     submitForm(formName) {
-      this.dialogTableVisible = true
+      this.dialogTableVisible = true;
       // this.$refs[formName].validate(valid => {
       //   console.log('123');
       //   if (valid) {
@@ -159,12 +157,10 @@ export default {
       // });
     },
     scanQuery() {
-      let queryparam = {
-        scanStr: this.textarea3,
-        token: localStorage.getItem("lsToken")
-      };
-      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
-        console.log(res);
+      console.log('123');
+      this.$router.push({
+        name: "结果",
+        params: { type: "scan", scanStr: this.textarea3 }
       });
     }
   }

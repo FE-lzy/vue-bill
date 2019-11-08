@@ -37,9 +37,11 @@ const actions = {
       queryData('/user/login', userInfo, "POST").then(res => {
         console.log(res);
         if (res.code == 0) {
+          console.log(res);
           commit('SET_TOKEN', res.data.uToken)
           setToken(res.data.uToken)
-          localStorage.setItem('userId', res.data.uid)
+          localStorage.setItem('userId', res.data.user.id)
+          localStorage.setItem('dwbm', res.data.user.dwbm)
           localStorage.setItem('lsToken',res.data.token)
           resolve()
         }

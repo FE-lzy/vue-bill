@@ -71,6 +71,7 @@ export const constantRoutes = [
         path: 'billResult',
         component: () => import('@/views/entry/billResult'),
         name: '结果',
+        hidden:true,
         meta: { title: '结果', icon: 'dashboard', affix: true }
       },
       {
@@ -127,6 +128,30 @@ export const constantRoutes = [
         name: '发票设置',
         meta: { title: '发票设置', icon: 'dashboard', affix: true }
       }
+    ]
+  },
+  {
+    path: '/administer',
+    component: Layout,
+    redirect: '/administer/userMan',
+    alwaysShow: true, 
+    meta: {
+      title: '管理',
+      icon: 'lock',
+    },
+    children: [
+      {
+        path: 'userMan',
+        component: () => import('@/views/administer/userMan'),
+        name: '员工管理',
+        meta: { title: '员工管理', icon: 'dashboard', affix: true }
+      },
+      {
+        path: 'partmentMan',
+        component: () => import('@/views/administer/partmentMan'),
+        name: '部门管理',
+        meta: { title: '部门管理', icon: 'dashboard', affix: true }
+      },
     ]
   },
 ]

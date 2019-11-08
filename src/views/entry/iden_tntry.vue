@@ -92,7 +92,7 @@ export default {
 </script>
 
 <style>
-.left_update {
+/* .left_update {
   padding: 30px;
 }
 .el-upload {
@@ -112,5 +112,5 @@ export default {
     float: right;
     margin-right:5%;
 
-}
+} */
 </style>
