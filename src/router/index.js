@@ -72,7 +72,20 @@ export const constantRoutes = [
         component: () => import('@/views/entry/billResult'),
         name: '结果',
         hidden:true,
-        meta: { title: '结果', icon: 'dashboard', affix: true }
+        meta: { title: '结果', icon: 'dashboard', affix: false }
+      },
+      {
+        path: 'commonTable',
+        component: () => import('@/views/entry/model/commonTable'),
+        name: '普通发票结果',
+        hidden:true,
+        meta: { title: '普通发票结果', icon: 'dashboard', affix: false }
+      },
+      {
+        path: 'volumeTable',
+        component: () => import('@/views/entry/model/volumeTable'),
+        name: '卷式发票结果',
+        meta: { title: '卷式发票结果', icon: 'dashboard', affix: false }
       },
       {
         path: 'other',

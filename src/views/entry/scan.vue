@@ -9,7 +9,7 @@
             ref="scanStr"
             :autosize="{ minRows: 2, maxRows: 4}"
             placeholder="请输入内容"
-            v-model="textarea3"
+            v-model="scanStr"
           ></el-input>
           <el-button @click="scanQuery">查询</el-button>
         </div>
@@ -98,7 +98,6 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog title="结果" width="100%" :visible.sync="dialogTableVisible"></el-dialog>
   </div>
 </template>
 
@@ -115,8 +114,8 @@ export default {
         invoiceAmount: "",
         checkCode: "250185"
       },
-      dialogTableVisible: false,
-      textarea3: "01,04,1100162350,19452405,66.37,20190425,17832785219143376258,A8CC,\n",
+      scanStr:
+        "01,04,1100162350,19452405,66.37,20190425,17832785219143376258,A8CC,\n",
       billType: "",
       billOptions: [
         {
@@ -130,7 +129,7 @@ export default {
       ]
     };
   },
-  mounted(){
+  mounted() {
     this.$refs.scanStr.focus();
   },
   methods: {
@@ -139,35 +138,95 @@ export default {
       console.log("发票类型", this.billType);
     },
     submitForm(formName) {
-      this.dialogTableVisible = true;
-      // this.$refs[formName].validate(valid => {
-      //   console.log('123');
-      //   if (valid) {
-      //     let token = localStorage.getItem("lsToken");
-      //     let queryparam = Object.assign(this.ruleForm, { token: token });
-      //     console.log(queryparam);
-      //     queryData("/bill/queryBillByCode", queryparam, "post").then(res => {
-      //       console.log(res);
-      //     });
-      //   } else {
-      //     console.log("error submit!!");
-      //     return false;
-      //   }
-      //   console.log(this.ruleForm);
-      // });
+      this.$refs[formName].validate(valid => {
+        console.log("开始手动验证");
+        if (valid) {
+          let token = localStorage.getItem("lsToken");
+          let queryparam = Object.assign(this.ruleForm, { token: token });
+          console.log(queryparam);
+          queryData("/bill/queryBillByCode", queryparam, "post")
+            .then(res => {
+              console.log(res);
+              if (res.code == 0) {
+                this.choiceModel(JSON.parse(res.data.invoiceResult).invoiceTypeCode,res.data.invoiceResult, false);
+              } else {
+                this.$message.error(res.msssage);
+              }
+            })
+            .catch(err => {
+              this.$message.error(err);
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+        console.log(this.ruleForm);
+      });
     },
     scanQuery() {
-      console.log('123');
-      this.$router.push({
-        name: "结果",
-        params: { type: "scan", scanStr: this.textarea3 }
+      if (this.scanStr) {
+        this.fetchIsHave();
+      }
+    },
+    // 选择模板
+    choiceModel(billType, data, isHave) {
+      // let code = scanStr.split(",")[1];
+      console.log(billType);
+      if (billType == "01" || billType == "04" || billType == "10") {
+        this.$router.push({
+          name: "普通发票结果",
+          params: { type: "scan", scanStr: data, isHave: isHave }
+        });
+      } else if (billType == "11") {
+        // 卷式发票
+        this.$router.push({
+          name: "卷式发票结果",
+          params: { type: "scan", scanStr: data, isHave: isHave }
+        });
+      } else if (billType == "14") {
+      }
+    },
+    // 判断是否录入
+    fetchIsHave() {
+      if (this.scanStr) {
+        let code = this.scanStr.split(",")[2];
+        let ishave = false;
+        console.log("编码：", code);
+        queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
+          console.log(res);
+          if (res.code == 0) {
+            this.choiceModel(JSON.parse(res.data.fp_detail.fp_detail).invoiceTypeCode,res.data, true);
+          } else {
+            this.queryByScan();
+          }
+        });
+      }
+    },
+    // 验证
+    queryByScan() {
+      let queryparam = {
+        scanStr: this.scanStr,
+        token: localStorage.getItem("lsToken")
+      };
+      console.log(queryparam);
+      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
+        console.log(res);
+        if (res.code == 0) {
+          if (res.data.resultCode == 1000) {
+            this.choiceModel(JSON.parse(res.data.invoiceResult).invoiceTypeCode,res.data, false);
+          } else {
+            this.$message.error(res.data.resultMsg);
+          }
+        } else {
+          this.$message.error(res.message);
+        }
       });
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .title {
   text-align: center;
   padding-top: 30px;

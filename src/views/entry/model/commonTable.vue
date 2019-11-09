@@ -282,18 +282,14 @@
         </el-form-item>
         <div style="text-align:center">
           <el-button type="primary" @click="saveBill('validForm')">录入</el-button>
-          <el-button >返回</el-button>
+          <el-button>返回</el-button>
         </div>
       </el-form>
     </div>
-    <common-table></common-table>
-    <pass-table :scanStr="billResJSON"></pass-table>
   </div>
 </template>
 <script>
 import { queryData } from "@/api/common";
-import commonTable from "./model/commonTable";
-import passTable from "./model/passTable";
 export default {
   name: "bill",
   data() {
@@ -336,15 +332,8 @@ export default {
         ]
       },
       bmOptions: [],
-      userOptions: [],
-      billTypeCode1: ["01", "04", "10"],
-      billTypeCode2: ["11"],
-      billTypeCode3: ["14"]
+      userOptions: []
     };
-  },
-  components:{
-    passTable,
-    commonTable
   },
   beforeMount() {
     if (!this.$route.params.scanStr) {
@@ -356,7 +345,8 @@ export default {
     this.getAllBm();
   },
   mounted() {
-    this.fetchIsHave();
+    this.handleBillInfo();
+    this.handleUserInfo();
   },
   methods: {
     getAllBm() {
@@ -364,7 +354,6 @@ export default {
       queryData("/manager/queryAllBm", param, "POST").then(res => {
         if (res.code == 0) {
           this.bmOptions = res.data.data;
-          console.log(this.bmOptions);
         }
       });
     },
@@ -376,79 +365,48 @@ export default {
       queryData("/manager/queryAllUser", param, "POST").then(res => {
         if (res.code == 0) {
           this.userOptions = res.data;
-          console.log(this.userOptions);
         }
       });
     },
-    // 判断是否已经录入
-    fetchIsHave() {
+
+    handleBillInfo() {
       if (this.$route.params.scanStr) {
-        let code = this.$route.params.scanStr.split(",")[2];
-        console.log("编码：", code);
-        queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
-          if (res.code == 0) {
-            this.$message.warning("记录已存在，请勿重复录入");
-            this.handleUserInfo(res.data);
-            this.billResJSON = res.data.fp_detail.fp_detail;
-            this.handleBillInfo(res.data.fp_detail.fp_detail);
-          } else {
-            this.queryByScan();
-          }
-        });
+          let detail = this.$route.params.scanStr;
+        if (this.$route.params.isHave) {
+           detail = this.$route.params.scanStr.fp_detail.fp_detail;
+        }
+        detail = JSON.parse(detail);
+        this.bill.invoiceTypeName = detail.invoiceTypeName;
+        this.bill.invoiceDataCode = detail.invoiceDataCode; //发票代码
+        this.bill.invoiceNumber = detail.invoiceNumber; //发票号码
+        this.bill.billingTime = detail.billingTime; // 开票时间
+        this.bill.checkCode = detail.checkCode; //校验码
+        this.bill.taxDiskCode = detail.taxDiskCode; //机器编号
+        this.bill.purchaserName = detail.purchaserName; //名称
+        this.bill.taxpayerNumber = detail.taxpayerNumber; //纳税人识别号
+
+        this.bill.salesName = detail.salesName; //销方名称
+        this.bill.salesTaxpayerNum = detail.salesTaxpayerNum; //销方纳税人识别号
+        this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount; //销方银行账户
+        this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress; //销方地址
+
+        this.bill.totalTaxNum = detail.totalTaxNum;
+        this.bill.totalTaxSum = detail.totalTaxSum;
+        this.bill.totalAmount = detail.totalAmount;
+        this.bill.invoiceRemarks = detail.invoiceRemarks;
+        this.bill.detailData = detail.invoiceDetailData;
       }
     },
-    // 扫码查询
-    queryByScan() {
-      let queryparam = {
-        scanStr: this.$route.params.scanStr,
-        token: localStorage.getItem("lsToken")
-      };
-      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
-        console.log(res);
-
-        if (res.code == 0) {
-          if (res.data.resultCode == 1000) {
-            this.billResJSON = res.data.invoiceResult;
-            this.handleBillInfo(res.data.invoiceResult);
-          } else {
-            this.$message.error(res.data.resultMsg);
-            this.$router.go(-1);
-          }
-        } else {
-          this.$message.error(res.message);
-          this.$router.go(-1);
+    handleUserInfo() {
+      if (this.$route.params.isHave) {
+        let data = this.$route.params.scanStr;
+        console.log(data.fp_gsr);
+        if (data.fp_gsr) {
+          this.form.fp_gsr = data.fp_gsr;
+          this.form.fp_gsbm = data.fp_gsbm;
+          this.form.fp_bz = data.fp_bz;
         }
-      });
-    },
-
-    handleBillInfo(data) {
-      console.log(data);
-      let detail = JSON.parse(data);
-      this.bill.invoiceTypeName = detail.invoiceTypeName;
-      this.bill.invoiceDataCode = detail.invoiceDataCode; //发票代码
-      this.bill.invoiceNumber = detail.invoiceNumber; //发票号码
-      this.bill.billingTime = detail.billingTime; // 开票时间
-      this.bill.checkCode = detail.checkCode; //校验码
-      this.bill.taxDiskCode = detail.taxDiskCode; //机器编号
-      this.bill.purchaserName = detail.purchaserName; //名称
-      this.bill.taxpayerNumber = detail.taxpayerNumber; //纳税人识别号
-
-      this.bill.salesName = detail.salesName; //销方名称
-      this.bill.salesTaxpayerNum = detail.salesTaxpayerNum; //销方纳税人识别号
-      this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount; //销方银行账户
-      this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress; //销方地址
-
-      this.bill.totalTaxNum = detail.totalTaxNum;
-      this.bill.totalTaxSum = detail.totalTaxSum;
-      this.bill.totalAmount = detail.totalAmount;
-      this.bill.invoiceRemarks = detail.invoiceRemarks;
-      this.bill.detailData = detail.invoiceDetailData;
-    },
-    handleUserInfo(data) {
-      console.log(data);
-      this.form.fp_gsr = data.fp_gsr;
-      this.form.fp_gsbm = data.fp_gsbm;
-      this.form.fp_bz = data.fp_bz;
+      }
     },
     saveBill(formName) {
       console.log(formName);
@@ -479,10 +437,9 @@ export default {
 };
 </script>
 
-
-<style lang="scss">
+<style lang="scss" scoped>
 .purple {
-  color: purple;
+  color: rgb(114, 66, 114);
 }
 .content {
   display: flex;
