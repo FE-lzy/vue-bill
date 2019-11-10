@@ -217,6 +217,7 @@ filters: {
         if (this.$route.params.isHave) {
            detail = this.$route.params.scanStr.fp_detail.fp_detail;
         }
+        this.billResJSON = detail;
         detail = JSON.parse(detail);
         this.bill.invoiceTypeName = detail.invoiceTypeName;
         this.bill.invoiceDataCode = detail.invoiceDataCode; //发票代码
@@ -253,7 +254,7 @@ filters: {
     saveBill(formName) {
       console.log(formName);
       //判断是否空对象 console.log(Object.keys(this.billResJSON).length);
-      if (this.billResJSON == "") {
+      if (this.billResJSON == "" || this.billResJSON == undefined) {
         this.$message.error("发票信息为空,请先验证发票");
         return;
       }
@@ -268,6 +269,7 @@ filters: {
           queryData("/bill/saveBill", param, "POST").then(res => {
             if (res.code == 0) {
               this.$message.success("录入成功");
+               this.$router.go(-1);
             } else {
               this.$message.error(res.message);
             }

@@ -5,6 +5,7 @@
         <div class="grid-content">
           <!-- <img src="@/assets/404_images/404.png" style="width:100%" /> -->
           <el-input
+          @input="changeT"
             type="textarea"
             ref="scanStr"
             :autosize="{ minRows: 2, maxRows: 4}"
@@ -25,7 +26,7 @@
             label-width="120px"
             class="demo-ruleForm form-div"
           >
-            <el-form-item
+            <!-- <el-form-item
               label="发票类型"
               prop="invoiceCode"
               :rules="[
@@ -40,7 +41,7 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item
               label="发票代码"
               prop="invoiceCode"
@@ -75,14 +76,13 @@
             </el-form-item>
             <el-form-item
               label="校验码后六位"
-              v-if="billType == 1 ? true : false"
               :rules="[
                   { required: true, message: '请输入', trigger: 'blur' },
                 ]"
             >
               <el-input v-model="ruleForm.checkCode" placeholder="输入校验码后六位"></el-input>
             </el-form-item>
-            <el-form-item
+            <!-- <el-form-item
               label="税前金额"
               v-if="billType == 2 ? true : false"
               :rules="[
@@ -90,7 +90,7 @@
                 ]"
             >
               <el-input v-model="ruleForm.invoiceAmount" placeholder="输入税前金额"></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item>
               <el-button type="primary" @click="submitForm('validForm')">查验</el-button>
             </el-form-item>
@@ -133,45 +133,97 @@ export default {
     this.$refs.scanStr.focus();
   },
   methods: {
-    getBillType(val) {
-      this.billType = val;
-      console.log("发票类型", this.billType);
+    changeT(val){
+      this.scanStr = val;
+      this.scanQuery();
     },
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        console.log("开始手动验证");
-        if (valid) {
-          let token = localStorage.getItem("lsToken");
-          let queryparam = Object.assign(this.ruleForm, { token: token });
-          console.log(queryparam);
-          queryData("/bill/queryBillByCode", queryparam, "post")
-            .then(res => {
-              console.log(res);
-              if (res.code == 0) {
-                this.choiceModel(JSON.parse(res.data.invoiceResult).invoiceTypeCode,res.data.invoiceResult, false);
-              } else {
-                this.$message.error(res.msssage);
-              }
-            })
-            .catch(err => {
-              this.$message.error(err);
-            });
+    // 判断是否录入
+    fetchIsHave(type) {
+      let code =
+        type == "scan" ? this.scanStr.split(",")[2] : this.ruleForm.invoiceCode;
+      queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
+        if (res.code == 0) {
+          this.choiceModel(
+            JSON.parse(res.data.fp_detail.fp_detail).invoiceTypeCode,
+            res.data,
+            true
+          );
         } else {
-          console.log("error submit!!");
-          return false;
+          if (type == "scan") {
+            this.queryByScan();
+          } else {
+            this.queryByCode();
+          }
         }
-        console.log(this.ruleForm);
       });
     },
+    getBillType(val) {
+      this.billType = val;
+    },
+    // 手动查验
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.fetchIsHave("code");
+        } else {
+          return false;
+        }
+      });
+    },
+    // watch
+    queryByCode() {
+      let token = localStorage.getItem("lsToken");
+      let queryparam = Object.assign(this.ruleForm, { token: token });
+      queryData("/bill/queryBillByCode", queryparam, "post")
+        .then(result => {
+          if (result.code == 0) {
+            this.choiceModel(
+              JSON.parse(result.data.invoiceResult).invoiceTypeCode,
+              result.data.invoiceResult,
+              false
+            );
+          } else {
+            this.$message.error(result.msssage);
+          }
+        })
+        .catch(err => {
+          this.$message.error(err);
+        });
+    },
+    // 扫码验证判断
     scanQuery() {
       if (this.scanStr) {
-        this.fetchIsHave();
+        // 是否存在
+        this.fetchIsHave("scan");
       }
+    },
+
+    // 根据扫码验证
+    queryByScan() {
+      let queryparam = {
+        scanStr: this.scanStr,
+        token: localStorage.getItem("lsToken")
+      };
+      console.log('123');
+      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
+        console.log(res);
+        if (res.code == 0) {
+          if (res.data.resultCode == "1000") {
+            this.choiceModel(
+              JSON.parse(res.data.invoiceResult).invoiceTypeCode,
+              res.data.invoiceResult,
+              false
+            );
+          } else {
+            this.$message.error(1+res.data.resultMsg);
+          }
+        } else {
+          this.$message.error(2+res.message);
+        }
+      });
     },
     // 选择模板
     choiceModel(billType, data, isHave) {
-      // let code = scanStr.split(",")[1];
-      console.log(billType);
       if (billType == "01" || billType == "04" || billType == "10") {
         this.$router.push({
           name: "普通发票结果",
@@ -184,43 +236,9 @@ export default {
           params: { type: "scan", scanStr: data, isHave: isHave }
         });
       } else if (billType == "14") {
+      } else {
+        this.$message.warning('目前仅支持查验普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票')
       }
-    },
-    // 判断是否录入
-    fetchIsHave() {
-      if (this.scanStr) {
-        let code = this.scanStr.split(",")[2];
-        let ishave = false;
-        console.log("编码：", code);
-        queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
-          console.log(res);
-          if (res.code == 0) {
-            this.choiceModel(JSON.parse(res.data.fp_detail.fp_detail).invoiceTypeCode,res.data, true);
-          } else {
-            this.queryByScan();
-          }
-        });
-      }
-    },
-    // 验证
-    queryByScan() {
-      let queryparam = {
-        scanStr: this.scanStr,
-        token: localStorage.getItem("lsToken")
-      };
-      console.log(queryparam);
-      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
-        console.log(res);
-        if (res.code == 0) {
-          if (res.data.resultCode == 1000) {
-            this.choiceModel(JSON.parse(res.data.invoiceResult).invoiceTypeCode,res.data, false);
-          } else {
-            this.$message.error(res.data.resultMsg);
-          }
-        } else {
-          this.$message.error(res.message);
-        }
-      });
     }
   }
 };

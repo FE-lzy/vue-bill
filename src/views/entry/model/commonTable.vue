@@ -373,8 +373,11 @@ export default {
       if (this.$route.params.scanStr) {
           let detail = this.$route.params.scanStr;
         if (this.$route.params.isHave) {
+          this.$message.warning('发票已存在，请勿重复录入')
            detail = this.$route.params.scanStr.fp_detail.fp_detail;
         }
+        this.billResJSON = detail;
+        console.log('table:',detail);
         detail = JSON.parse(detail);
         this.bill.invoiceTypeName = detail.invoiceTypeName;
         this.bill.invoiceDataCode = detail.invoiceDataCode; //发票代码
@@ -426,6 +429,7 @@ export default {
           queryData("/bill/saveBill", param, "POST").then(res => {
             if (res.code == 0) {
               this.$message.success("录入成功");
+              this.$router.go(-1);
             } else {
               this.$message.error(res.message);
             }
