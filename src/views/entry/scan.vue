@@ -135,12 +135,12 @@ export default {
   methods: {
     changeT(val){
       this.scanStr = val;
-      this.scanQuery();
+      // this.scanQuery();
     },
     // 判断是否录入
     fetchIsHave(type) {
       let code =
-        type == "scan" ? this.scanStr.split(",")[2] : this.ruleForm.invoiceCode;
+        type == "scan" ? this.scanStr.split(",")[3] : this.ruleForm.invoiceCode;
       queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
         if (res.code == 0) {
           this.choiceModel(

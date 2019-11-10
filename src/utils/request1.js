@@ -8,8 +8,8 @@ const service = axios.create({
   baseURL: 'http://localhost:3000', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 20000, // request timeout
-  headers:{
-    'content-type':'application/json'
+  headers: {
+    'content-type': 'application/json'
   }
 })
 
@@ -48,10 +48,20 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
+    console.log('返回结果', res);
+    if (res.code == 0) {
 
-    // if(res.data.message.error){
-
-    // }
+      if (res.data.error == 'token error') {
+        alert('登录超时，请重新登录')
+        // this.$router.push('login');
+        console.log(location);
+        // location.pathname = '#login'
+        
+        // store.dispatch('user/resetToken').then(() => {
+        //   location.reload()
+        // })
+      }
+    }
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 0) {
     //   Message({
@@ -75,7 +85,7 @@ service.interceptors.response.use(
     //   }
     //   return Promise.reject(new Error(res.message || 'Error'))
     // } else {
-      return res
+    return res
     // }
   },
   error => {
