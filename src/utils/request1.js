@@ -23,7 +23,7 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['authorization'] = getToken()
+      config.headers['authorization'] = "Bearer "+getToken()
     }
     return config
   },
