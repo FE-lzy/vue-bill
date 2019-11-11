@@ -50,11 +50,9 @@ service.interceptors.response.use(
     const res = response.data
     console.log('返回结果', res);
     if (res.code == 0) {
-
       if (res.data.error == 'token error') {
         alert('登录超时，请重新登录')
-        // this.$router.push('login');
-        console.log(location);
+        router.push('login');
         // location.pathname = '#login'
         
         // store.dispatch('user/resetToken').then(() => {
