@@ -85,26 +85,27 @@ export const constantRoutes = [
         path: 'volumeTable',
         component: () => import('@/views/entry/model/volumeTable'),
         name: '卷式发票结果',
+        hidden:true,
         meta: { title: '卷式发票结果', icon: 'dashboard', affix: false }
       },
-      {
-        path: 'other',
-        component: () => import('@/views/entry/other'),
-        name: '其他发票录入',
-        meta: { title: '其他发票录入', icon: 'dashboard', affix: true }
-      },
-      {
-        path: 'con_sacn',
-        component: () => import('@/views/entry/con_sacn'),
-        name: '连续扫描',
-        meta: { title: '连续扫描', icon: 'dashboard', affix: true }
-      },
-      {
-        path: 'iden_tntry',
-        component: () => import('@/views/entry/iden_tntry'),
-        name: '识别录入',
-        meta: { title: '识别录入', icon: 'dashboard', affix: true }
-      }
+      // {
+      //   path: 'other',
+      //   component: () => import('@/views/entry/other'),
+      //   name: '其他发票录入',
+      //   meta: { title: '其他发票录入', icon: 'dashboard', affix: true }
+      // },
+      // {
+      //   path: 'con_sacn',
+      //   component: () => import('@/views/entry/con_sacn'),
+      //   name: '连续扫描',
+      //   meta: { title: '连续扫描', icon: 'dashboard', affix: true }
+      // },
+      // {
+      //   path: 'iden_tntry',
+      //   component: () => import('@/views/entry/iden_tntry'),
+      //   name: '识别录入',
+      //   meta: { title: '识别录入', icon: 'dashboard', affix: true }
+      // }
     ]
   },
   {

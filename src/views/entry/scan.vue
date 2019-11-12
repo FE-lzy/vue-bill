@@ -5,7 +5,7 @@
         <div class="grid-content">
           <!-- <img src="@/assets/404_images/404.png" style="width:100%" /> -->
           <el-input
-          @input="changeT"
+            @input="changeT"
             type="textarea"
             ref="scanStr"
             :autosize="{ minRows: 2, maxRows: 4}"
@@ -41,7 +41,7 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-            </el-form-item> -->
+            </el-form-item>-->
             <el-form-item
               label="发票代码"
               prop="invoiceCode"
@@ -90,7 +90,7 @@
                 ]"
             >
               <el-input v-model="ruleForm.invoiceAmount" placeholder="输入税前金额"></el-input>
-            </el-form-item> -->
+            </el-form-item>-->
             <el-form-item>
               <el-button type="primary" @click="submitForm('validForm')">查验</el-button>
             </el-form-item>
@@ -133,7 +133,7 @@ export default {
     this.$refs.scanStr.focus();
   },
   methods: {
-    changeT(val){
+    changeT(val) {
       this.scanStr = val;
       // this.scanQuery();
     },
@@ -204,7 +204,7 @@ export default {
         scanStr: this.scanStr,
         token: localStorage.getItem("lsToken")
       };
-      console.log('123');
+      console.log("123");
       queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
         console.log(res);
         if (res.code == 0) {
@@ -215,10 +215,10 @@ export default {
               false
             );
           } else {
-            this.$message.error(1+res.data.resultMsg);
+            this.$message.error(res.data.resultMsg);
           }
         } else {
-          this.$message.error(2+res.message);
+          this.$message.error(res.message);
         }
       });
     },
@@ -237,7 +237,9 @@ export default {
         });
       } else if (billType == "14") {
       } else {
-        this.$message.warning('目前仅支持查验普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票')
+        this.$message.warning(
+          "目前仅支持查验普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票"
+        );
       }
     }
   }
