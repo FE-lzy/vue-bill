@@ -102,6 +102,7 @@
 </template>
 
 <script>
+const dwbm = { dwbm: localStorage.getItem("dwbm") };
 import { queryData } from "@/api/common";
 export default {
   name: "scan",
@@ -173,7 +174,7 @@ export default {
     // watch
     queryByCode() {
       let token = localStorage.getItem("lsToken");
-      let queryparam = Object.assign(this.ruleForm, { token: token });
+      let queryparam = Object.assign(this.ruleForm, dwbm,{ token: token });
       queryData("/bill/queryBillByCode", queryparam, "post")
         .then(result => {
           if (result.code == 0) {
