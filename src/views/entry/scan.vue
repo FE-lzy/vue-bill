@@ -110,10 +110,10 @@ export default {
     return {
       ruleForm: {
         invoiceCode: "037001851107",
-        invoiceNumber: "01947559",
-        billTime: "2019-10-4",
+        invoiceNumber: "00879927",
+        billTime: "2019-4-4",
         invoiceAmount: "",
-        checkCode: "250185"
+        checkCode: "440055"
       },
       scanStr:
         "01,04,1100162350,19452405,66.37,20190425,17832785219143376258,A8CC,\n",
