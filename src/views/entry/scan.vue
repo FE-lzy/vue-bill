@@ -237,6 +237,11 @@ export default {
           params: { type: "scan", scanStr: data, isHave: isHave }
         });
       } else if (billType == "14") {
+        // 卷式发票结果
+        this.$router.push({
+          name: "通行证发票结果",
+          params: { type: "scan", scanStr: data, isHave: isHave }
+        });
       } else {
         this.$message.warning(
           "目前仅支持查验普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票"

@@ -97,6 +97,31 @@
       <el-table-column v-if="colData[4].istrue" prop="entryDate" label="录入时间"></el-table-column>
       <el-table-column v-if="colData[5].istrue" prop="zymc" label="归属人"></el-table-column>
       <el-table-column v-if="colData[6].istrue" prop="bmmc" label="归属部门"></el-table-column>
+      <el-table-column v-if="colData[7].istrue" prop="invoiceTypeName" label="发票名称"></el-table-column>
+      <el-table-column v-if="colData[8].istrue" prop="billingTime" label="开票日期"></el-table-column>
+      <el-table-column v-if="colData[9].istrue" prop="checkDate" label="查询日期"></el-table-column>
+      <el-table-column v-if="colData[10].istrue" prop="checkCode" label="校验码"></el-table-column>
+      <el-table-column v-if="colData[11].istrue" prop="taxDiskCode" label="机器码"></el-table-column>
+      <el-table-column v-if="colData[12].istrue" prop="purchaserName" label="购方名称"></el-table-column>
+
+      <el-table-column v-if="colData[13].istrue" prop="taxpayerNumber" label="购方纳税人识别号"></el-table-column>
+      <el-table-column v-if="colData[14].istrue" prop="taxpayerBankAccount" label="购方银行账号"></el-table-column>
+      <el-table-column v-if="colData[15].istrue" prop="taxpayerAddressOrId" label="购方地址，电话"></el-table-column>
+      <el-table-column v-if="colData[16].istrue" prop="totalTaxNum" label="税额"></el-table-column>
+
+      <el-table-column v-if="colData[17].istrue" prop="totalAmount" label="不含税价（金额）"></el-table-column>
+      <el-table-column v-if="colData[18].istrue" prop="invoiceRemarks" label="备注"></el-table-column>
+      <el-table-column v-if="colData[19].istrue" prop="isBillMark" label="是否为清单票" :formatter="isBillMark"></el-table-column>
+      <el-table-column v-if="colData[20].istrue" prop="voidMark" label="作废标志" :formatter="voidMark"></el-table-column>
+      <el-table-column v-if="colData[21].istrue" prop="tollSignName" label="收费标志名称"></el-table-column>
+       <el-table-column
+      fixed="right"
+      label="操作"
+      width="100">
+      <template slot-scope="scope">
+        <el-button @click="Billdetail(scope.row)" type="text" size="small">查看详情</el-button>
+      </template>
+    </el-table-column>
     </el-table>
     <!-- </el-tab-pane>
       <el-tab-pane label="其他发票" name="second">其他发票</el-tab-pane>
@@ -154,6 +179,12 @@ export default {
           return cellValue;
         }
       },
+      isBillMark: function(row, column, cellValue) {
+        return cellValue == "Y" ? "是" : "否";
+      },
+      voidMark: function(row, column, cellValue) {
+        return cellValue == "0" ? "正常" : "作废";
+      },
       // 列名
       colData: [
         { title: "发票序号", istrue: true, prop: "invoiceDataCode" },
@@ -162,12 +193,29 @@ export default {
         { title: "价税合计", istrue: true, prop: "totalTaxSum" },
         { title: "录入时间", istrue: true, prop: "entryDate" },
         { title: "归属人", istrue: true, prop: "zymc" },
-        { title: "归属部门", istrue: true, prop: "bmmc" }
+        { title: "归属部门", istrue: true, prop: "bmmc" },
+
+        { title: "发票名称", istrue: false, prop: "invoiceTypeName" },
+        { title: "开票日期", istrue: false, prop: "billingTime" },
+        { title: "查询日期", istrue: false, prop: "checkDate" },
+        { title: "校验码", istrue: false, prop: "checkCode" },
+        { title: "机器码", istrue: false, prop: "taxDiskCode" },
+        { title: "购方名称", istrue: false, prop: "purchaserName" },
+        { title: "购方纳税人识别号", istrue: false, prop: "taxpayerNumber" },
+        { title: "购方银行账号", istrue: false, prop: "taxpayerBankAccount" },
+        { title: "购方地址，电话", istrue: false, prop: "taxpayerAddressOrId" },
+
+        { title: "税额", istrue: false, prop: "totalTaxNum" },
+        { title: "不含税价（金额）", istrue: false, prop: "totalAmount" },
+        { title: "备注", istrue: false, prop: "invoiceRemarks" },
+        { title: "是否为清单票", istrue: false, prop: "isBillMark" },
+        { title: "作废标志", istrue: false, prop: "voidMark" },
+        { title: "收费标志名称", istrue: false, prop: "tollSignName" }
       ],
       colOptions: [],
       colSelect: [],
-      selectArr:[],
-      colProps:[],
+      selectArr: [],
+      colProps: [],
       downloadLoading: false,
       filename: "发票列表",
       autoWidth: true,
@@ -179,17 +227,17 @@ export default {
     var _this = this;
     for (let i = 0; i < _this.colData.length; i++) {
       _this.colSelect.push(_this.colData[i].title);
-      if (_this.colData[i].title == "名称") {
+      if (i > 6) {
         //初始化不想展示的列可以放在这个条件里
         continue;
       }
-      console.log(_this.colData[i].prop)
+      console.log(_this.colData[i].prop);
       _this.colOptions.push(_this.colData[i].title);
-      _this.colProps.push(_this.colData[i].prop)
-       _this.selectArr.push(_this.colData[i].title);
+      _this.colProps.push(_this.colData[i].prop);
+      _this.selectArr.push(_this.colData[i].title);
     }
     console.log(_this.selectArr);
-    console.log('初始化',_this.colProps);
+    console.log("初始化", _this.colProps);
   },
   watch: {
     colOptions(valArr) {
@@ -209,11 +257,11 @@ export default {
         }
       });
       this.colProps = [];
-      this.colData.filter(i =>{
-         if(this.selectArr.indexOf(i.title) != -1 ){
-          this.colProps.push(i.prop)
-         } 
-      })
+      this.colData.filter(i => {
+        if (this.selectArr.indexOf(i.title) != -1) {
+          this.colProps.push(i.prop);
+        }
+      });
     }
   },
   mounted() {
@@ -222,6 +270,13 @@ export default {
     this.getBillType();
   },
   methods: {
+    Billdetail(row){
+      console.log(row);
+      let detail = JSON.parse(row.fp_detail).invoiceDetailData;
+      let typeCode = JSON.parse(row.fp_detail).invoiceTypeCode;
+      console.log(detail)
+
+    },
     getAllBm() {
       queryData("/manager/queryAllBm", dwbm, "POST").then(res => {
         if (res.code == 0) {
@@ -243,7 +298,28 @@ export default {
         if (res.code == 0) {
           console.log(res);
           this.tableData = res.data;
+          for (let i = 0; i < res.data.length; i++) {
+            let detail = JSON.parse(res.data[i].fp_detail);
+            this.tableData[i].invoiceTypeName = detail.invoiceTypeName;
+            this.tableData[i].invoiceTypeCode = detail.invoiceTypeCode;
+            this.tableData[i].billingTime = detail.billingTime;
+            this.tableData[i].checkDate = detail.checkDate;
+            this.tableData[i].checkCode = detail.checkCode;
+            this.tableData[i].taxDiskCode = detail.taxDiskCode;
+            this.tableData[i].purchaserName = detail.purchaserName;
+            this.tableData[i].taxpayerNumber = detail.taxpayerNumber;
+            this.tableData[i].taxpayerBankAccount = detail.taxpayerBankAccount;
+            this.tableData[i].taxpayerAddressOrId = detail.taxpayerAddressOrId;
+            this.tableData[i].totalAmount = detail.totalAmount;
+            this.tableData[i].totalTaxSum = detail.totalTaxSum;
+            this.tableData[i].totalTaxNum = detail.totalTaxNum;
+            this.tableData[i].invoiceRemarks = detail.invoiceRemarks;
+            this.tableData[i].isBillMark = detail.isBillMark;
+            this.tableData[i].voidMark = detail.voidMark;
+            this.tableData[i].tollSignName = detail.tollSignName;
+          }
         }
+        console.log(this.tableData);
       });
     },
     handleClick(tab, event) {

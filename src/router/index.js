@@ -88,6 +88,13 @@ export const constantRoutes = [
         hidden:true,
         meta: { title: '卷式发票结果', icon: 'dashboard', affix: false }
       },
+      {
+        path: 'passTable',
+        component: () => import('@/views/entry/model/passTable'),
+        name: '通行证发票结果',
+        hidden:true,
+        meta: { title: '通行证发票结果', icon: 'dashboard', affix: false }
+      },
       // {
       //   path: 'other',
       //   component: () => import('@/views/entry/other'),

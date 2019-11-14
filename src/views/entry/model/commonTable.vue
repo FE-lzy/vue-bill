@@ -129,12 +129,12 @@
           </el-col>
           <el-col :span="2">
             <el-row>
-              <el-col class="purple">{{item.number}}</el-col>
+              <el-col class="purple">{{parseFloat(item.number).toFixed(2)}}</el-col>
             </el-row>
           </el-col>
           <el-col :span="3">
             <el-row>
-              <el-col class="purple">{{item.price}}</el-col>
+              <el-col class="purple">{{parseFloat(item.price).toFixed(2)}}</el-col>
             </el-row>
           </el-col>
           <el-col :span="4">
@@ -200,7 +200,7 @@
           style="border: 1px solid #ccc;height:40px;line-height:40px;text-align:center"
         >
           <el-col :span="5" style="border-right:1px solid #ccc">价格合计(大写)</el-col>
-          <el-col :span="10" class="purple">六百五十体验版</el-col>
+          <el-col :span="10" class="purple">{{bill.chineseTaxSum}}</el-col>
           <el-col :span="9">
             (小写)
             <span class="purple">￥{{bill.totalTaxSum}}</span>
@@ -290,6 +290,7 @@
 </template>
 <script>
 import { queryData } from "@/api/common";
+import { numberToUpper } from "@/utils/arabia.js";
 export default {
   name: "bill",
   data() {
@@ -398,6 +399,8 @@ export default {
         this.bill.totalAmount = detail.totalAmount;
         this.bill.invoiceRemarks = detail.invoiceRemarks;
         this.bill.detailData = detail.invoiceDetailData;
+        console.log(parseFloat(detail.totalTaxSum));
+        this.bill.chineseTaxSum =  numberToUpper(parseFloat(detail.totalTaxSum));
       }
     },
     handleUserInfo() {
