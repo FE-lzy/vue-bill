@@ -61,9 +61,6 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="getData">查询</el-button>
-        <el-button @click="resetForm()">重置</el-button>
-
         <el-select
           v-model="colOptions"
           multiple
@@ -73,6 +70,10 @@
         >
           <el-option v-for="item in colSelect" :key="item" :label="item" :value="item"></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="getData">查询</el-button>
+        <el-button @click="resetForm()">重置</el-button>
         <el-button
           :loading="downloadLoading"
           style="margin:0 0 20px 20px;"
@@ -81,9 +82,20 @@
           @click="handleDownload"
         >导出Excel</el-button>
       </el-form-item>
+      <el-form-item v-if="showBtn">
+        <el-button @click="deleteBills">批量删除</el-button>
+      </el-form-item>
     </el-form>
 
-    <el-table :data="tableData" border stripe style="width: 100%" ref="tableDataRef">
+    <el-table
+      :data="tableData"
+      stripe
+      style="width: 100%"
+      ref="tableDataRef"
+      @selection-change="handleSelectionChange"
+      :default-sort="{prop: 'entryDate', order: 'descending'}"
+    >
+      <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="#" type="index" label="序号"></el-table-column>
       <el-table-column v-if="colData[0].istrue" prop="invoiceDataCode" label="发票序号"></el-table-column>
       <el-table-column
@@ -94,7 +106,7 @@
       ></el-table-column>
       <el-table-column v-if="colData[2].istrue" prop="salesName" label="销售方名称"></el-table-column>
       <el-table-column v-if="colData[3].istrue" prop="totalTaxSum" label="价税合计"></el-table-column>
-      <el-table-column v-if="colData[4].istrue" prop="entryDate" label="录入时间"></el-table-column>
+      <el-table-column v-if="colData[4].istrue" prop="entryDate" sortable label="录入时间"></el-table-column>
       <el-table-column v-if="colData[5].istrue" prop="zymc" label="归属人"></el-table-column>
       <el-table-column v-if="colData[6].istrue" prop="bmmc" label="归属部门"></el-table-column>
       <el-table-column v-if="colData[7].istrue" prop="invoiceTypeName" label="发票名称"></el-table-column>
@@ -111,30 +123,55 @@
 
       <el-table-column v-if="colData[17].istrue" prop="totalAmount" label="不含税价（金额）"></el-table-column>
       <el-table-column v-if="colData[18].istrue" prop="invoiceRemarks" label="备注"></el-table-column>
-      <el-table-column v-if="colData[19].istrue" prop="isBillMark" label="是否为清单票" :formatter="isBillMark"></el-table-column>
+      <el-table-column
+        v-if="colData[19].istrue"
+        prop="isBillMark"
+        label="是否为清单票"
+        :formatter="isBillMark"
+      ></el-table-column>
       <el-table-column v-if="colData[20].istrue" prop="voidMark" label="作废标志" :formatter="voidMark"></el-table-column>
       <el-table-column v-if="colData[21].istrue" prop="tollSignName" label="收费标志名称"></el-table-column>
-       <el-table-column
-      fixed="right"
-      label="操作"
-      width="100">
-      <template slot-scope="scope">
-        <el-button @click="Billdetail(scope.row)" type="text" size="small">查看详情</el-button>
-      </template>
-    </el-table-column>
+      <el-table-column fixed="right" label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button @click="Billdetail(scope.row)" type="text" size="small">查看详情</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- </el-tab-pane>
       <el-tab-pane label="其他发票" name="second">其他发票</el-tab-pane>
     </el-tabs>-->
+    <el-dialog title="详情" :visible.sync="commonVisible" width="55%">
+      <common :detail="detailData"></common>
+    </el-dialog>
+    <el-dialog title="详情" :visible.sync="passVisible" width="55%">
+      <pass :detail="detailData"></pass>
+    </el-dialog>
+    <el-dialog title="详情" :visible.sync="volumeVisible" width="55%">
+      <volume :detail="detailData"></volume>
+    </el-dialog>
   </div>
 </template>
 <script>
 const dwbm = { dwbm: localStorage.getItem("dwbm") };
+import common from "./model/common";
+import pass from "./model/pass";
+import volume from "./model/volume";
 import { queryData } from "../../api/common";
 export default {
+  components: {
+    common,
+    pass,
+    volume
+  },
   data() {
     return {
+      detailData: [],
+      multipleSelection: [],
+      showBtn: false,
       value2: "",
+      commonVisible: false,
+      passVisible: false,
+      volumeVisible: false,
       pickerOptions: {
         shortcuts: [
           {
@@ -270,12 +307,60 @@ export default {
     this.getBillType();
   },
   methods: {
-    Billdetail(row){
-      console.log(row);
-      let detail = JSON.parse(row.fp_detail).invoiceDetailData;
-      let typeCode = JSON.parse(row.fp_detail).invoiceTypeCode;
-      console.log(detail)
+    deleteBills() {
+      let m = this.multipleSelection;
+      let selectId = [];
+      for (let i = 0; i < m.length; i++) {
+        selectId.push(m[i].id);
+      }
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          queryData("/bill/deleteBills", { ids: selectId }, "POST")
+            .then(res => {
+              if (res.code == 0) {
+                this.$message.success("删除成功");
+                this.getData();
+              } else {
+                this.$message.error(res.message);
+              }
+            })
+            .catch(err => {
+              this.$message.error(err);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      if (val.length > 0) {
+        this.showBtn = true;
+      } else {
+        this.showBtn = false;
+      }
+      console.log(val);
+    },
+    Billdetail(row) {
+      this.detailData = JSON.parse(row.fp_detail);
+      let billType = this.detailData.invoiceTypeCode;
+      if (billType == "01" || billType == "04" || billType == "10") {
+        this.commonVisible = true;
+      } else if (billType == "11") {
+        this.volumeVisible = true;
+      } else if (billType == "14") {
+        // 通行证
+        this.passVisible = true;
+      }
 
+      console.log("qwe", this.detailData);
     },
     getAllBm() {
       queryData("/manager/queryAllBm", dwbm, "POST").then(res => {

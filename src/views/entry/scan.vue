@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <div class="grid-content">
-          <!-- <img src="@/assets/404_images/404.png" style="width:100%" /> -->
+          <img src="@/assets/scan.jpg" style="width:100%" />
           <el-input
             @input="changeT"
             type="textarea"
@@ -140,9 +140,12 @@ export default {
     },
     // 判断是否录入
     fetchIsHave(type) {
+      console.log(type);
       let code =
-        type == "scan" ? this.scanStr.split(",")[3] : this.ruleForm.invoiceCode;
+        type == "scan" ? this.scanStr.split(",")[3] : this.ruleForm.invoiceNumber;
+        console.log(code);
       queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
+        console.log(res);
         if (res.code == 0) {
           this.choiceModel(
             JSON.parse(res.data.fp_detail.fp_detail).invoiceTypeCode,
@@ -174,21 +177,25 @@ export default {
     // watch
     queryByCode() {
       let token = localStorage.getItem("lsToken");
-      let queryparam = Object.assign(this.ruleForm, dwbm,{ token: token });
+      let queryparam = Object.assign(this.ruleForm, dwbm, { token: token });
+      console.log('请求参数',queryparam);
+      let _this = this;
       queryData("/bill/queryBillByCode", queryparam, "post")
         .then(result => {
+          console.log('1232',result);
           if (result.code == 0) {
-            this.choiceModel(
+            _this.choiceModel(
               JSON.parse(result.data.invoiceResult).invoiceTypeCode,
               result.data.invoiceResult,
               false
             );
           } else {
-            this.$message.error(result.msssage);
+            console.log(result.message);
+            _this.$message.error(result.message);
           }
         })
         .catch(err => {
-          this.$message.error(err);
+          _this.$message.error(err);
         });
     },
     // 扫码验证判断
@@ -216,7 +223,7 @@ export default {
               false
             );
           } else {
-            this.$message.error(res.data.resultMsg);
+            this.$message.error(res.message);
           }
         } else {
           this.$message.error(res.message);
@@ -225,6 +232,7 @@ export default {
     },
     // 选择模板
     choiceModel(billType, data, isHave) {
+    console.log(billType);
       if (billType == "01" || billType == "04" || billType == "10") {
         this.$router.push({
           name: "普通发票结果",

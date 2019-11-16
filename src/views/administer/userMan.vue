@@ -21,7 +21,7 @@
           <el-button type="primary" @click="addForm" plain>新增</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData" border style="width: 100%;">
+      <el-table :data="tableData" style="width: 100%;">
         <el-table-column prop="id" label="员工编码" width="120"></el-table-column>
         <el-table-column prop="zymc" label="员工名称" width="180"></el-table-column>
         <el-table-column prop="bmmc" label="部门名称"></el-table-column>

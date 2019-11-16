@@ -58,14 +58,14 @@ export const constantRoutes = [
     alwaysShow: true, 
     meta: {
       title: '发票录入',
-      icon: 'lock',
+      icon: 'edit',
     },
     children: [
       {
         path: 'scan',
         component: () => import('@/views/entry/scan'),
         name: '扫描录入',
-        meta: { title: '扫描录入', icon: 'dashboard', affix: true }
+        meta: { title: '扫描录入', icon: 'search', affix: true }
       },
       {
         path: 'billResult',
@@ -122,14 +122,14 @@ export const constantRoutes = [
     alwaysShow: true, 
     meta: {
       title: '发票管理',
-      icon: 'lock',
+      icon: 'list',
     },
     children: [
       {
         path: 'bill_query',
         component: () => import('@/views/manager/bill_query'),
         name: '发票查询',
-        meta: { title: '发票查询', icon: 'dashboard', affix: true }
+        meta: { title: '发票查询', icon: 'table', affix: true }
       },
       // {
       //   path: 'bill_payable',
@@ -147,7 +147,7 @@ export const constantRoutes = [
         path: 'bill_setting',
         component: () => import('@/views/manager/bill_setting'),
         name: '发票设置',
-        meta: { title: '发票设置', icon: 'dashboard', affix: true }
+        meta: { title: '发票设置', icon: 'lock', affix: true }
       }
     ]
   },
@@ -157,21 +157,27 @@ export const constantRoutes = [
     redirect: '/administer/userMan',
     alwaysShow: true, 
     meta: {
-      title: '管理',
-      icon: 'lock',
+      title: '系统管理',
+      icon: 'example',
     },
     children: [
       {
         path: 'userMan',
         component: () => import('@/views/administer/userMan'),
         name: '员工管理',
-        meta: { title: '员工管理', icon: 'dashboard', affix: true }
+        meta: { title: '员工管理', icon: 'peoples', affix: true }
       },
       {
         path: 'partmentMan',
         component: () => import('@/views/administer/partmentMan'),
         name: '部门管理',
-        meta: { title: '部门管理', icon: 'dashboard', affix: true }
+        meta: { title: '部门管理', icon: 'nested', affix: true }
+      },
+      {
+        path: 'dwSetting',
+        component: () => import('@/views/administer/dwSetting'),
+        name: '单位设置',
+        meta: { title: '单位设置', icon: 'form', affix: true }
       },
     ]
   },
@@ -182,85 +188,85 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
-    name: 'Permission',
-    meta: {
-      title: 'Permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
-        meta: {
-          title: 'Page Permission',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'Directive Permission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'Role Permission',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/permission',
+  //   component: Layout,
+  //   redirect: '/permission/page',
+  //   alwaysShow: true, // will always show the root menu
+  //   name: 'Permission',
+  //   meta: {
+  //     title: 'Permission',
+  //     icon: 'lock',
+  //     roles: ['admin', 'editor'] // you can set roles in root nav
+  //   },
+  //   children: [
+  //     {
+  //       path: 'page',
+  //       component: () => import('@/views/permission/page'),
+  //       name: 'PagePermission',
+  //       meta: {
+  //         title: 'Page Permission',
+  //         roles: ['admin'] // or you can only set roles in sub nav
+  //       }
+  //     },
+  //     {
+  //       path: 'directive',
+  //       component: () => import('@/views/permission/directive'),
+  //       name: 'DirectivePermission',
+  //       meta: {
+  //         title: 'Directive Permission'
+  //         // if do not set roles, means: this page does not require permission
+  //       }
+  //     },
+  //     {
+  //       path: 'role',
+  //       component: () => import('@/views/permission/role'),
+  //       name: 'RolePermission',
+  //       meta: {
+  //         title: 'Role Permission',
+  //         roles: ['admin']
+  //       }
+  //     }
+  //   ]
+  // },
 
-  {
-    path: '/error',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'ErrorPages',
-    meta: {
-      title: 'Error Pages',
-      icon: '404'
-    },
-    children: [
-      {
-        path: '401',
-        component: () => import('@/views/error-page/401'),
-        name: 'Page401',
-        meta: { title: '401', noCache: true }
-      },
-      {
-        path: '404',
-        component: () => import('@/views/error-page/404'),
-        name: 'Page404',
-        meta: { title: '404', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/error',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   name: 'ErrorPages',
+  //   meta: {
+  //     title: 'Error Pages',
+  //     icon: '404'
+  //   },
+  //   children: [
+  //     {
+  //       path: '401',
+  //       component: () => import('@/views/error-page/401'),
+  //       name: 'Page401',
+  //       meta: { title: '401', noCache: true }
+  //     },
+  //     {
+  //       path: '404',
+  //       component: () => import('@/views/error-page/404'),
+  //       name: 'Page404',
+  //       meta: { title: '404', noCache: true }
+  //     }
+  //   ]
+  // },
 
-  {
-    path: '/error-log',
-    component: Layout,
-    children: [
-      {
-        path: 'log',
-        component: () => import('@/views/error-log/index'),
-        name: 'ErrorLog',
-        meta: { title: 'Error Log', icon: 'bug' }
-      }
-    ]
-  },
+  // {
+  //   path: '/error-log',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'log',
+  //       component: () => import('@/views/error-log/index'),
+  //       name: 'ErrorLog',
+  //       meta: { title: 'Error Log', icon: 'bug' }
+  //     }
+  //   ]
+  // },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

@@ -1,55 +1,127 @@
 <template>
-  <el-table :data="list" style="width: 100%;padding-top: 15px;">
-    <el-table-column label="Order_No" min-width="200">
-      <template slot-scope="scope">
-        {{ scope.row.order_no | orderNoFilter }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Price" width="195" align="center">
-      <template slot-scope="scope">
-        ¥{{ scope.row.price | toThousandFilter }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="{row}">
-        <el-tag :type="row.status | statusFilter">
-          {{ row.status }}
-        </el-tag>
-      </template>
-    </el-table-column>
-  </el-table>
+  <div>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="根据开票日期统计" name="billingTime">
+        <el-table :data="tableData" show-summary style="width: 100%">
+          <el-table-column prop="name" label="发票类型"></el-table-column>
+          <el-table-column prop="typeCount" label="统计张数"></el-table-column>
+          <el-table-column prop="taxsum" label="金额合计"></el-table-column>
+          <el-table-column prop="taxnum" label="税额合计"></el-table-column>
+          <el-table-column prop="amount3" label="合计"></el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="根据录入日期统计" name="entryDate">
+        <el-table :data="tableData" show-summary style="width: 100%">
+          <el-table-column prop="name" label="发票类型"></el-table-column>
+          <el-table-column prop="typeCount" label="统计张数"></el-table-column>
+          <el-table-column prop="taxsum" label="金额合计"></el-table-column>
+          <el-table-column prop="taxnum" label="税额合计"></el-table-column>
+          <el-table-column prop="total" label="合计"></el-table-column>
+        </el-table> 
+      </el-tab-pane>
+    </el-tabs>
+    <div class="pickMonth">
+      <el-date-picker v-model="pickMonth" @change="changeMonth" type="month" placeholder="选择月"></el-date-picker>
+    </div>
+  </div>
 </template>
 
 <script>
-import { transactionList } from '@/api/remote-search'
-
+import { transactionList } from "@/api/remote-search";
+import { queryData } from "../../../../api/common";
+const dwbm = { dwbm: localStorage.getItem("dwbm") };
 export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        success: 'success',
-        pending: 'danger'
-      }
-      return statusMap[status]
+        success: "success",
+        pending: "danger"
+      };
+      return statusMap[status];
     },
     orderNoFilter(str) {
-      return str.substring(0, 30)
+      return str.substring(0, 30);
     }
   },
   data() {
     return {
-      list: null
-    }
+      list: null,
+      activeName: "billingTime",
+      pickMonth: new Date(),
+      tableData: []
+    };
   },
+
   created() {
-    this.fetchData()
+    this.fetchData();
+  },
+  mounted() {
+    this.getBillTypeCount();
   },
   methods: {
+    changeMonth(){
+      this.getBillTypeCount()
+    },
     fetchData() {
       transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8)
+        this.list = response.data.items.slice(0, 8);
+      });
+    },
+    handleClick(tab, event) {
+      this.getBillTypeCount();
+    },
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = "总价";
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index] += " 元";
+        } else {
+          sums[index] = "N/A";
+        }
+      });
+
+      return sums;
+    },
+    getBillTypeCount() {
+      let d = this.pickMonth;
+      let month = d.getFullYear() + '-' + (d.getMonth() + 1 < 10 ? '0'+ (d.getMonth() + 1) : (d.getMonth() + 1));
+      console.log(month);
+      let param = Object.assign({pickMonth:month,timeType:this.activeName},dwbm)
+      queryData('/manager/getBillTypeCount',param,"POST").then(res=>{
+        console.log(res);
+        if(res.code == 0){
+          this.tableData = res.data;
+        }
       })
     }
   }
-}
+};
 </script>
+<style scoped>
+.el-tabs__item:hover {
+  color: #1890ff !important;
+  cursor: pointer !important;
+}
+.el-tabs__item.is-active {
+  color: #1890ff !important;
+}
+.pickMonth {
+  position: absolute;
+  right: 30px;
+  top: -7px;
+}
+</style>

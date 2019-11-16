@@ -8,25 +8,20 @@
           </el-col>
           <el-col :span="3">
             <el-row>
-              <el-col>规格型号</el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="2">
-            <el-row>
-              <el-col>单位</el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="2">
-            <el-row>
-              <el-col>数量</el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="3">
-            <el-row>
-              <el-col>单价</el-col>
+              <el-col>车牌号</el-col>
             </el-row>
           </el-col>
           <el-col :span="4">
+            <el-row>
+              <el-col>通行日期起</el-col>
+            </el-row>
+          </el-col>
+          <el-col :span="4">
+            <el-row>
+              <el-col>通行日期止</el-col>
+            </el-row>
+          </el-col>
+          <el-col :span="3">
             <el-row>
               <el-col>金额</el-col>
             </el-row>
@@ -42,7 +37,7 @@
             </el-row>
           </el-col>
         </el-row>
-       <el-row type="flex" class="goodsDetail" v-for="item in detail.invoiceDetailData">
+        <el-row type="flex" class="goodsDetail" v-for="item in detail.detailData">
           <el-col :span="5">
             <el-row>
               <el-col class="purple">{{item.goodserviceName}}</el-col>
@@ -50,22 +45,17 @@
           </el-col>
           <el-col :span="3">
             <el-row>
-              <el-col class="purple">{{item.model}}</el-col>
+              <el-col class="purple">{{item.plateNo}}</el-col>
             </el-row>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4">
             <el-row>
-              <el-col class="purple">{{item.unit}}</el-col>
+              <el-col class="purple">{{item.passStartDate}}</el-col>
             </el-row>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4">
             <el-row>
-              <el-col class="purple">{{parseFloat(item.number).toFixed(2)}}</el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="3">
-            <el-row>
-              <el-col class="purple">{{parseFloat(item.price).toFixed(2)}}</el-col>
+              <el-col class="purple">{{item.passEndDate}}</el-col>
             </el-row>
           </el-col>
           <el-col :span="4">
@@ -84,7 +74,6 @@
             </el-row>
           </el-col>
         </el-row>
-    
         <el-row type="flex" class="goodsDetail">
           <el-col :span="5">
             <el-row>
@@ -127,7 +116,6 @@
             </el-row>
           </el-col>
         </el-row>
-    
     </div>
 </template>
 

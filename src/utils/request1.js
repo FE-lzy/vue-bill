@@ -49,10 +49,10 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     console.log('返回结果', res);
-    if (res.code == 0) {
+    if (res.data) {
       if (res.data.error == 'token error') {
         alert('登录超时，请重新登录')
-        router.push('login');
+        router.replace('login');
         // location.pathname = '#login'
         
         // store.dispatch('user/resetToken').then(() => {

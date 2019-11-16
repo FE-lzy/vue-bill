@@ -289,6 +289,7 @@
   </div>
 </template>
 <script>
+const dwbm = { dwbm: localStorage.getItem("dwbm") };
 import { queryData } from "@/api/common";
 import { numberToUpper } from "@/utils/arabia.js";
 export default {
@@ -426,12 +427,13 @@ export default {
           let param = Object.assign(
             this.form,
             { billInfo: this.billResJSON },
-            { uid: localStorage.getItem("userId") }
+            { uid: localStorage.getItem("userId") },
+            dwbm
           );
           console.log(param);
           queryData("/bill/saveBill", param, "POST").then(res => {
             if (res.code == 0) {
-              this.$message.success("录入成功");
+              this.$message.success("操作成功");
               this.$router.go(-1);
             } else {
               this.$message.error(res.message);
@@ -468,6 +470,12 @@ export default {
 .el-form {
   border-radius: 2px;
   padding: 30px;
+}
+.el-select{
+  width: 80% !important;
+}
+.el-textarea{
+  width: 80% !important;
 }
 // .el-input--medium .el-input__inner {
 //   width: 100%;

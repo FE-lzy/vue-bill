@@ -79,7 +79,7 @@
       <el-row class="detailTitle">
         <el-col :span="10">货物或应税劳务、服务</el-col>
         <el-col :span="4">单价(元)</el-col>
-        <el-col :span="4">数量(元)</el-col>
+        <el-col :span="4">数量</el-col>
         <el-col :span="3">金额(元)</el-col>
         <el-col :span="3">税额(元)</el-col>
       </el-row>
@@ -147,6 +147,7 @@
 </template>
 
 <script>
+const dwbm = { dwbm: localStorage.getItem("dwbm") };
 import { queryData } from "@/api/common";
 export default {
   name: "volume",
@@ -215,6 +216,7 @@ filters: {
       if (this.$route.params.scanStr) {
           let detail = this.$route.params.scanStr;
         if (this.$route.params.isHave) {
+          this.$message.warning("发票已存在，请勿重复录入");
            detail = this.$route.params.scanStr.fp_detail.fp_detail;
         }
         this.billResJSON = detail;
@@ -263,12 +265,13 @@ filters: {
           let param = Object.assign(
             this.form,
             { billInfo: this.billResJSON },
-            { uid: localStorage.getItem("userId") }
+            { uid: localStorage.getItem("userId") },
+            dwbm
           );
           console.log(param);
           queryData("/bill/saveBill", param, "POST").then(res => {
             if (res.code == 0) {
-              this.$message.success("录入成功");
+              this.$message.success("操作成功");
                this.$router.go(-1);
             } else {
               this.$message.error(res.message);
@@ -285,19 +288,19 @@ filters: {
 <style lang="scss" scoped>
 .content {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   flex-wrap: wrap;
   padding: 30px;
 }
 .left {
   padding: 10px;
-  width: 400px;
+  min-width: 400px;
   background: #fff;
   border: 1px solid #eee;
 }
 .middle {
   padding: 23px;
-  width: 600px;
+  min-width: 400px;
   background: #fff;
   border: 1px solid #eee;
   .el-row {
@@ -319,7 +322,13 @@ filters: {
 }
 .right {
   padding: 10px;
-  width: 35%;
+  min-width: 300px;
+}
+.el-select{
+  width: 80% !important;
+}
+.el-textarea{
+  width: 80% !important;
 }
 .toptitle {
   text-align: center;
