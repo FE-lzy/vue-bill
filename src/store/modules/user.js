@@ -34,38 +34,37 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      queryData('/user/login', userInfo, "POST").then(res => {
-        console.log(res);
+      queryData('/user/login', userInfo, 'POST').then(res => {
+        console.log(res)
         if (res.code == 0) {
-          console.log(res);
+          console.log(res)
           commit('SET_TOKEN', res.data.uToken)
           setToken(res.data.uToken)
           localStorage.setItem('userId', res.data.user.id)
           localStorage.setItem('dwbm', res.data.user.dwbm)
-          localStorage.setItem('lsToken',res.data.token)
+          localStorage.setItem('lsToken', res.data.token)
           resolve()
         }
       }).catch(error => {
         reject(error)
       })
-
     })
   },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      let uid = localStorage.getItem('userId');
-      console.log(uid);
+      const uid = localStorage.getItem('userId')
+      console.log(uid)
 
-      queryData('/user/userInfo', { id: uid }, "POST").then(res => {
-        console.log(res);
+      queryData('/user/userInfo', { id: uid }, 'POST').then(res => {
+        console.log(res)
         var dataC = {
           introduction: 'I am a super administrator',
           avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
           name: res.data.name,
           roles: res.data.roles
-        };
-        const { name, avatar, introduction ,roles} = dataC;
+        }
+        const { name, avatar, introduction, roles } = dataC
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
@@ -73,21 +72,20 @@ const actions = {
 
         resolve(dataC)
       }).catch(err => {
-        reject(err);
-      });
+        reject(err)
+      })
     })
   },
-
 
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       // logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        removeToken()
-        resetRouter()
-        resolve()
+      commit('SET_TOKEN', '')
+      commit('SET_ROLES', [])
+      removeToken()
+      resetRouter()
+      resolve()
       // }).catch(error => {
       //   reject(error)
       // })

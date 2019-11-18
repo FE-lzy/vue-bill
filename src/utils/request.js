@@ -23,7 +23,7 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['authorization'] = "Bearer "+getToken()
+      config.headers['authorization'] = 'Bearer ' + getToken()
     }
     return config
   },
@@ -48,13 +48,13 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    console.log('返回结果', res);
+    console.log('返回结果', res)
     if (res.data) {
       if (res.data.error == 'token error') {
         alert('登录超时，请重新登录')
-        router.replace('login');
+        router.replace('login')
         // location.pathname = '#login'
-        
+
         // store.dispatch('user/resetToken').then(() => {
         //   location.reload()
         // })

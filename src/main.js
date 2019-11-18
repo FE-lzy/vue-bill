@@ -8,7 +8,7 @@ import Element from 'element-ui'
 import './styles/element-variables.scss'
 
 import '@/styles/index.scss' // global css
-import VueJsonp from 'vue-jsonp' //jsonp
+import VueJsonp from 'vue-jsonp' // jsonp
 import App from './App'
 import store from './store'
 import router from './router'
@@ -19,9 +19,9 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
-import Bmob from "hydrogen-js-sdk";
+import Bmob from 'hydrogen-js-sdk'
 // 初始化
-Bmob.initialize("e4056c6d63384375", "billWJ");
+Bmob.initialize('e4056c6d63384375', 'billWJ')
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

@@ -3,27 +3,27 @@
     <div class="left">
       <div class="top">
         <h3>发票查验明细</h3>
-        <p class="billTitle" style="text-align:center">{{bill.invoiceTypeName}}</p>
+        <p class="billTitle" style="text-align:center">{{ bill.invoiceTypeName }}</p>
         <div class="billinfo">
           <span>
             发票代码：
-            <span class="purple">{{bill.invoiceDataCode}}</span>
+            <span class="purple">{{ bill.invoiceDataCode }}</span>
           </span>
           <span>
             发票号码：
-            <span class="purple">{{bill.invoiceNumber}}</span>
+            <span class="purple">{{ bill.invoiceNumber }}</span>
           </span>
           <span>
             开票日期：
-            <span class="purple">{{bill.billingTime}}</span>
+            <span class="purple">{{ bill.billingTime }}</span>
           </span>
           <span>
             校验码：
-            <span class="purple">{{bill.checkCode}}</span>
+            <span class="purple">{{ bill.checkCode }}</span>
           </span>
           <span>
             机器编号：
-            <span class="purple">{{bill.taxDiskCode}}</span>
+            <span class="purple">{{ bill.taxDiskCode }}</span>
           </span>
         </div>
       </div>
@@ -33,42 +33,42 @@
           <el-col :span="1">
             <div class="topTitle" style="border-right:1px solid #ccc">
               购
-              <br />买
-              <br />方
+              <br>买
+              <br>方
             </div>
           </el-col>
           <el-col :span="16" style="border-right:1px solid #ccc">
             <div class="buyDetail">
               <el-row>
                 <el-col :span="6">名称：</el-col>
-                <el-col :span="18" class="purple">{{bill.purchaserName}}</el-col>
+                <el-col :span="18" class="purple">{{ bill.purchaserName }}</el-col>
               </el-row>
               <el-row>
                 <el-col :span="6">纳税人识别号：</el-col>
-                <el-col :span="18" class="purple">{{bill.taxpayerNumber}}</el-col>
+                <el-col :span="18" class="purple">{{ bill.taxpayerNumber }}</el-col>
               </el-row>
               <el-row>
                 <el-col :span="6">地址、电话：</el-col>
-                <el-col :span="18"></el-col>
+                <el-col :span="18" />
               </el-row>
               <el-row>
                 <el-col :span="6">开户行及账号：</el-col>
-                <el-col :span="18"></el-col>
+                <el-col :span="18" />
               </el-row>
             </div>
           </el-col>
           <el-col :span="1">
             <div class="topTitle" style="border-right:1px solid #ccc">
               密
-              <br />码
-              <br />区
+              <br>码
+              <br>区
             </div>
           </el-col>
           <el-col :span="6" style="height:100%">
-            <div></div>
+            <div />
           </el-col>
         </el-row>
-        <br />
+        <br>
         <el-row type="flex" style="margin-top:-15px;" class="goodsDetail">
           <el-col :span="5">
             <el-row>
@@ -111,45 +111,45 @@
             </el-row>
           </el-col>
         </el-row>
-        <el-row type="flex" class="goodsDetail" v-for="item in bill.detailData">
+        <el-row v-for="item in bill.detailData" type="flex" class="goodsDetail">
           <el-col :span="5">
             <el-row>
-              <el-col class="purple">{{item.goodserviceName}}</el-col>
+              <el-col class="purple">{{ item.goodserviceName }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="3">
             <el-row>
-              <el-col class="purple">{{item.model}}</el-col>
+              <el-col class="purple">{{ item.model }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="2">
             <el-row>
-              <el-col class="purple">{{item.unit}}</el-col>
+              <el-col class="purple">{{ item.unit }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="2">
             <el-row>
-              <el-col class="purple">{{item.number}}</el-col>
+              <el-col class="purple">{{ item.number }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="3">
             <el-row>
-              <el-col class="purple">{{item.price}}</el-col>
+              <el-col class="purple">{{ item.price }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="4">
             <el-row>
-              <el-col class="purple">{{item.sum}}</el-col>
+              <el-col class="purple">{{ item.sum }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="1">
             <el-row>
-              <el-col class="purple">{{item.taxRate}}</el-col>
+              <el-col class="purple">{{ item.taxRate }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="4">
             <el-row>
-              <el-col class="purple">{{item.tax}}</el-col>
+              <el-col class="purple">{{ item.tax }}</el-col>
             </el-row>
           </el-col>
         </el-row>
@@ -161,37 +161,37 @@
           </el-col>
           <el-col :span="3">
             <el-row>
-              <el-col></el-col>
+              <el-col />
             </el-row>
           </el-col>
           <el-col :span="2">
             <el-row>
-              <el-col></el-col>
+              <el-col />
             </el-row>
           </el-col>
           <el-col :span="2">
             <el-row>
-              <el-col></el-col>
+              <el-col />
             </el-row>
           </el-col>
           <el-col :span="3">
             <el-row>
-              <el-col></el-col>
+              <el-col />
             </el-row>
           </el-col>
           <el-col :span="4">
             <el-row>
-              <el-col class="purple">￥{{bill.totalAmount}}</el-col>
+              <el-col class="purple">￥{{ bill.totalAmount }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="1">
             <el-row>
-              <el-col></el-col>
+              <el-col />
             </el-row>
           </el-col>
           <el-col :span="4">
             <el-row>
-              <el-col class="purple">￥{{bill.totalTaxNum}}</el-col>
+              <el-col class="purple">￥{{ bill.totalTaxNum }}</el-col>
             </el-row>
           </el-col>
         </el-row>
@@ -203,46 +203,46 @@
           <el-col :span="10" class="purple">六百五十体验版</el-col>
           <el-col :span="9">
             (小写)
-            <span class="purple">￥{{bill.totalTaxSum}}</span>
+            <span class="purple">￥{{ bill.totalTaxSum }}</span>
           </el-col>
         </el-row>
         <el-row type="flex" style="border: 1px solid #ccc">
           <el-col :span="1" style="border-right:1px solid #ccc">
             <div class="topTitle">
               销
-              <br />售
-              <br />方
+              <br>售
+              <br>方
             </div>
           </el-col>
           <el-col :span="16" style="border-right:1px solid #ccc">
             <div class="buyDetail">
               <el-row>
                 <el-col :span="6">名称：</el-col>
-                <el-col :span="18" class="purple">{{bill.salesName}}</el-col>
+                <el-col :span="18" class="purple">{{ bill.salesName }}</el-col>
               </el-row>
               <el-row>
                 <el-col :span="6">纳税人识别号：</el-col>
-                <el-col :span="18" class="purple">{{bill.salesTaxpayerNum}}</el-col>
+                <el-col :span="18" class="purple">{{ bill.salesTaxpayerNum }}</el-col>
               </el-row>
               <el-row>
                 <el-col :span="6">地址、电话：</el-col>
-                <el-col :span="18" class="purple">{{bill.salesTaxpayerAddress}}</el-col>
+                <el-col :span="18" class="purple">{{ bill.salesTaxpayerAddress }}</el-col>
               </el-row>
               <el-row>
                 <el-col :span="6">开户行及账号：</el-col>
-                <el-col :span="18" class="purple">{{bill.salesTaxpayerBankAccount}}</el-col>
+                <el-col :span="18" class="purple">{{ bill.salesTaxpayerBankAccount }}</el-col>
               </el-row>
             </div>
           </el-col>
           <el-col :span="1">
             <div class="topTitle" style="border-right:1px solid #ccc">
               备
-              <br />注
-              <br />区
+              <br>注
+              <br>区
             </div>
           </el-col>
           <el-col :span="6" style="height:100%">
-            <div class="purple">{{bill.invoiceRemarks}}</div>
+            <div class="purple">{{ bill.invoiceRemarks }}</div>
           </el-col>
         </el-row>
       </div>
@@ -254,231 +254,230 @@
         <el-form-item
           label="发票归属部门"
           :rules="[
-                  { required: true, message: '请输入', trigger: 'blur' },
-                ]"
+            { required: true, message: '请输入', trigger: 'blur' },
+          ]"
         >
-          <el-select filterable v-model="form.fp_gsbm" placeholder="所在部门">
-            <el-option v-for="item in bmOptions" :key="item.id" :label="item.bmmc" :value="item.id"></el-option>
+          <el-select v-model="form.fp_gsbm" filterable placeholder="所在部门">
+            <el-option v-for="item in bmOptions" :key="item.id" :label="item.bmmc" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item
           label="发票归属人"
           :rules="[
-                  { required: true, message: '请输入', trigger: 'blur' },
-                ]"
+            { required: true, message: '请输入', trigger: 'blur' },
+          ]"
         >
-          <el-select filterable v-model="form.fp_gsr" placeholder="发票归属人">
+          <el-select v-model="form.fp_gsr" filterable placeholder="发票归属人">
             <el-option
               v-for="item in userOptions"
               :key="item.id"
               :label="item.zymc"
               :value="item.id"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.fp_bz"></el-input>
+          <el-input v-model="form.fp_bz" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>
         <div style="text-align:center">
           <el-button type="primary" @click="saveBill('validForm')">录入</el-button>
-          <el-button >返回</el-button>
+          <el-button>返回</el-button>
         </div>
       </el-form>
     </div>
-    <common-table></common-table>
-    <pass-table :scanStr="billResJSON"></pass-table>
+    <common-table />
+    <pass-table :scan-str="billResJSON" />
   </div>
 </template>
 <script>
-import { queryData } from "@/api/common";
-import commonTable from "./model/commonTable";
-import passTable from "./model/passTable";
+import { queryData } from '@/api/common'
+import commonTable from './model/commonTable'
+import passTable from './model/passTable'
 export default {
-  name: "bill",
+  name: 'Bill',
+  components: {
+    passTable,
+    commonTable
+  },
   data() {
     return {
-      labelPosition: "right",
+      labelPosition: 'right',
       form: {
-        fp_gsr: "",
-        fp_gsbm: "",
-        fp_bz: ""
+        fp_gsr: '',
+        fp_gsbm: '',
+        fp_bz: ''
       },
-      billResJSON: "",
+      billResJSON: '',
       bill: {
-        invoiceTypeName: "",
-        invoiceDataCode: "", //开票代码
-        invoiceNumber: "", //开票号码
-        billingTime: "", //开票时间
-        checkCode: "", //校验码
-        taxDiskCode: "", //机器编号
-        purchaserName: "", //名称
-        taxpayerNumber: "", //纳税人识别号
-        salesName: "", //销方名称
-        salesTaxpayerNum: "", //销方纳税人识别号
-        salesTaxpayerBankAccount: "", //销方银行账户
-        salesTaxpayerAddress: "", //销方地址
-        totalTaxNum: "", //税额
-        totalTaxSum: "", //价格总计
-        totalAmount: "", //不含税价(金额)
-        invoiceRemarks: "", //备注
+        invoiceTypeName: '',
+        invoiceDataCode: '', // 开票代码
+        invoiceNumber: '', // 开票号码
+        billingTime: '', // 开票时间
+        checkCode: '', // 校验码
+        taxDiskCode: '', // 机器编号
+        purchaserName: '', // 名称
+        taxpayerNumber: '', // 纳税人识别号
+        salesName: '', // 销方名称
+        salesTaxpayerNum: '', // 销方纳税人识别号
+        salesTaxpayerBankAccount: '', // 销方银行账户
+        salesTaxpayerAddress: '', // 销方地址
+        totalTaxNum: '', // 税额
+        totalTaxSum: '', // 价格总计
+        totalAmount: '', // 不含税价(金额)
+        invoiceRemarks: '', // 备注
         detailData: [
           {
-            goodserviceName: "",
-            sum: "", //总和
-            number: "", //数量
-            taxRate: "", //税率
-            model: "", //型号
-            price: "", //单价
-            tax: "", //税额
-            unit: "" //单位
+            goodserviceName: '',
+            sum: '', // 总和
+            number: '', // 数量
+            taxRate: '', // 税率
+            model: '', // 型号
+            price: '', // 单价
+            tax: '', // 税额
+            unit: '' // 单位
           }
         ]
       },
       bmOptions: [],
       userOptions: [],
-      billTypeCode1: ["01", "04", "10"],
-      billTypeCode2: ["11"],
-      billTypeCode3: ["14"]
-    };
-  },
-  components:{
-    passTable,
-    commonTable
+      billTypeCode1: ['01', '04', '10'],
+      billTypeCode2: ['11'],
+      billTypeCode3: ['14']
+    }
   },
   beforeMount() {
     if (!this.$route.params.scanStr) {
-      this.$message.error("请先验证发票");
-      this.$router.go(-1);
-      return;
+      this.$message.error('请先验证发票')
+      this.$router.go(-1)
+      return
     }
-    this.getAllUser();
-    this.getAllBm();
+    this.getAllUser()
+    this.getAllBm()
   },
   mounted() {
-    this.fetchIsHave();
+    this.fetchIsHave()
   },
   methods: {
     getAllBm() {
-      let param = { dwbm: localStorage.getItem("dwbm") };
-      queryData("/manager/queryAllBm", param, "POST").then(res => {
+      const param = { dwbm: localStorage.getItem('dwbm') }
+      queryData('/manager/queryAllBm', param, 'POST').then(res => {
         if (res.code == 0) {
-          this.bmOptions = res.data.data;
-          console.log(this.bmOptions);
+          this.bmOptions = res.data.data
+          console.log(this.bmOptions)
         }
-      });
+      })
     },
     getAllUser() {
-      let param = {
-        dwbm: localStorage.getItem("dwbm"),
+      const param = {
+        dwbm: localStorage.getItem('dwbm'),
         bmbm: this.form.fp_gsbm
-      };
-      queryData("/manager/queryAllUser", param, "POST").then(res => {
+      }
+      queryData('/manager/queryAllUser', param, 'POST').then(res => {
         if (res.code == 0) {
-          this.userOptions = res.data;
-          console.log(this.userOptions);
+          this.userOptions = res.data
+          console.log(this.userOptions)
         }
-      });
+      })
     },
     // 判断是否已经录入
     fetchIsHave() {
       if (this.$route.params.scanStr) {
-        let code = this.$route.params.scanStr.split(",")[2];
-        console.log("编码：", code);
-        queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
+        const code = this.$route.params.scanStr.split(',')[2]
+        console.log('编码：', code)
+        queryData('/bill/getBillInfo', { code: code }, 'POST').then(res => {
           if (res.code == 0) {
-            this.$message.warning("记录已存在，请勿重复录入");
-            this.handleUserInfo(res.data);
-            this.billResJSON = res.data.fp_detail.fp_detail;
-            this.handleBillInfo(res.data.fp_detail.fp_detail);
+            this.$message.warning('记录已存在，请勿重复录入')
+            this.handleUserInfo(res.data)
+            this.billResJSON = res.data.fp_detail.fp_detail
+            this.handleBillInfo(res.data.fp_detail.fp_detail)
           } else {
-            this.queryByScan();
+            this.queryByScan()
           }
-        });
+        })
       }
     },
     // 扫码查询
     queryByScan() {
-      let queryparam = {
+      const queryparam = {
         scanStr: this.$route.params.scanStr,
-        token: localStorage.getItem("lsToken")
-      };
-      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
-        console.log(res);
+        token: localStorage.getItem('lsToken')
+      }
+      queryData('/bill/queryBillByScan', queryparam, 'post').then(res => {
+        console.log(res)
 
         if (res.code == 0) {
           if (res.data.resultCode == 1000) {
-            this.billResJSON = res.data.invoiceResult;
-            this.handleBillInfo(res.data.invoiceResult);
+            this.billResJSON = res.data.invoiceResult
+            this.handleBillInfo(res.data.invoiceResult)
           } else {
-            this.$message.error(res.data.resultMsg);
-            this.$router.go(-1);
+            this.$message.error(res.data.resultMsg)
+            this.$router.go(-1)
           }
         } else {
-          this.$message.error(res.message);
-          this.$router.go(-1);
+          this.$message.error(res.message)
+          this.$router.go(-1)
         }
-      });
+      })
     },
 
     handleBillInfo(data) {
-      console.log(data);
-      let detail = JSON.parse(data);
-      this.bill.invoiceTypeName = detail.invoiceTypeName;
-      this.bill.invoiceDataCode = detail.invoiceDataCode; //发票代码
-      this.bill.invoiceNumber = detail.invoiceNumber; //发票号码
-      this.bill.billingTime = detail.billingTime; // 开票时间
-      this.bill.checkCode = detail.checkCode; //校验码
-      this.bill.taxDiskCode = detail.taxDiskCode; //机器编号
-      this.bill.purchaserName = detail.purchaserName; //名称
-      this.bill.taxpayerNumber = detail.taxpayerNumber; //纳税人识别号
+      console.log(data)
+      const detail = JSON.parse(data)
+      this.bill.invoiceTypeName = detail.invoiceTypeName
+      this.bill.invoiceDataCode = detail.invoiceDataCode // 发票代码
+      this.bill.invoiceNumber = detail.invoiceNumber // 发票号码
+      this.bill.billingTime = detail.billingTime // 开票时间
+      this.bill.checkCode = detail.checkCode // 校验码
+      this.bill.taxDiskCode = detail.taxDiskCode // 机器编号
+      this.bill.purchaserName = detail.purchaserName // 名称
+      this.bill.taxpayerNumber = detail.taxpayerNumber // 纳税人识别号
 
-      this.bill.salesName = detail.salesName; //销方名称
-      this.bill.salesTaxpayerNum = detail.salesTaxpayerNum; //销方纳税人识别号
-      this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount; //销方银行账户
-      this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress; //销方地址
+      this.bill.salesName = detail.salesName // 销方名称
+      this.bill.salesTaxpayerNum = detail.salesTaxpayerNum // 销方纳税人识别号
+      this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount // 销方银行账户
+      this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress // 销方地址
 
-      this.bill.totalTaxNum = detail.totalTaxNum;
-      this.bill.totalTaxSum = detail.totalTaxSum;
-      this.bill.totalAmount = detail.totalAmount;
-      this.bill.invoiceRemarks = detail.invoiceRemarks;
-      this.bill.detailData = detail.invoiceDetailData;
+      this.bill.totalTaxNum = detail.totalTaxNum
+      this.bill.totalTaxSum = detail.totalTaxSum
+      this.bill.totalAmount = detail.totalAmount
+      this.bill.invoiceRemarks = detail.invoiceRemarks
+      this.bill.detailData = detail.invoiceDetailData
     },
     handleUserInfo(data) {
-      console.log(data);
-      this.form.fp_gsr = data.fp_gsr;
-      this.form.fp_gsbm = data.fp_gsbm;
-      this.form.fp_bz = data.fp_bz;
+      console.log(data)
+      this.form.fp_gsr = data.fp_gsr
+      this.form.fp_gsbm = data.fp_gsbm
+      this.form.fp_bz = data.fp_bz
     },
     saveBill(formName) {
-      console.log(formName);
-      //判断是否空对象 console.log(Object.keys(this.billResJSON).length);
-      if (this.billResJSON == "") {
-        this.$message.error("发票信息为空,请先验证发票");
-        return;
+      console.log(formName)
+      // 判断是否空对象 console.log(Object.keys(this.billResJSON).length);
+      if (this.billResJSON == '') {
+        this.$message.error('发票信息为空,请先验证发票')
+        return
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let param = Object.assign(
+          const param = Object.assign(
             this.form,
             { billInfo: this.billResJSON },
-            { uid: localStorage.getItem("userId") }
-          );
-          console.log(param);
-          queryData("/bill/saveBill", param, "POST").then(res => {
+            { uid: localStorage.getItem('userId') }
+          )
+          console.log(param)
+          queryData('/bill/saveBill', param, 'POST').then(res => {
             if (res.code == 0) {
-              this.$message.success("录入成功");
+              this.$message.success('录入成功')
             } else {
-              this.$message.error(res.message);
+              this.$message.error(res.message)
             }
-          });
+          })
         }
-      });
+      })
     }
   }
-};
+}
 </script>
-
 
 <style lang="scss">
 .purple {

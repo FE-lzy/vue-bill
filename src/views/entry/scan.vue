@@ -7,18 +7,18 @@
           <h4 style="text-align:center;">(请确保扫描设备已连接到我的电脑)</h4>
           <div style="display:flex;justify-content: center;">
             <el-input
-              @input="changeT"
-              type="textarea"
               ref="scanStr"
+              v-model="scanStr"
+              type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="请使用扫描设备扫描发票二维码，扫描过程请保持输入框聚焦状态"
-              v-model="scanStr"
               style="text-align:center;"
-            ></el-input>
+              @input="changeT"
+            />
           </div>
 
-          <h5></h5>
-          <img src="@/assets/scan1.png" style="width:100%" />
+          <h5 />
+          <img src="@/assets/scan1.png" style="width:100%">
 
           <!-- <el-button @click="scanQuery">查询</el-button> -->
         </div>
@@ -28,9 +28,9 @@
           <h2 class="title">手动输入</h2>
 
           <el-form
+            ref="validForm"
             :model="ruleForm"
             status-icon
-            ref="validForm"
             label-width="120px"
             class="demo-ruleForm form-div"
           >
@@ -54,42 +54,42 @@
               label="发票代码"
               prop="invoiceCode"
               :rules="[
-                  { required: true, message: '请输入', trigger: 'blur' },
-                ]"
+                { required: true, message: '请输入', trigger: 'blur' },
+              ]"
             >
-              <el-input type="text" v-model="ruleForm.invoiceCode" placeholder="输入发票代码"></el-input>
+              <el-input v-model="ruleForm.invoiceCode" type="text" placeholder="输入发票代码" />
             </el-form-item>
             <el-form-item
               label="发票号码"
               prop="invoiceNumber"
               :rules="[
-                  { required: true, message: '请输入', trigger: 'blur' },
-                ]"
+                { required: true, message: '请输入', trigger: 'blur' },
+              ]"
             >
-              <el-input type="text" v-model="ruleForm.invoiceNumber" placeholder="输入发票号码"></el-input>
+              <el-input v-model="ruleForm.invoiceNumber" type="text" placeholder="输入发票号码" />
             </el-form-item>
             <el-form-item
               style="width:100%;"
               label="开票日期"
               prop="billTime"
               :rules="[
-                  { required: true, message: '请输入', trigger: 'blur' },
-                ]"
+                { required: true, message: '请输入', trigger: 'blur' },
+              ]"
             >
               <el-date-picker
                 v-model="ruleForm.billTime"
                 type="date"
                 placeholder="选择开票日期"
                 value-format="yyyy-MM-dd"
-              ></el-date-picker>
+              />
             </el-form-item>
             <el-form-item
               label="校验码后六位"
               :rules="[
-                  { required: true, message: '请输入', trigger: 'blur' },
-                ]"
+                { required: true, message: '请输入', trigger: 'blur' },
+              ]"
             >
-              <el-input v-model="ruleForm.checkCode" placeholder="输入校验码后六位"></el-input>
+              <el-input v-model="ruleForm.checkCode" placeholder="输入校验码后六位" />
             </el-form-item>
             <!-- <el-form-item
               label="税前金额"
@@ -111,172 +111,172 @@
 </template>
 
 <script>
-const dwbm = { dwbm: localStorage.getItem("dwbm") };
-import { queryData } from "@/api/common";
+const dwbm = { dwbm: localStorage.getItem('dwbm') }
+import { queryData } from '@/api/common'
 export default {
-  name: "scan",
+  name: 'Scan',
   data() {
     return {
       ruleForm: {
-        invoiceCode: "037001851107",
-        invoiceNumber: "00879927",
-        billTime: "2019-4-4",
-        invoiceAmount: "",
-        checkCode: "440055"
+        invoiceCode: '037001851107',
+        invoiceNumber: '00879927',
+        billTime: '2019-4-4',
+        invoiceAmount: '',
+        checkCode: '440055'
       },
       beginInter: true,
-      scanStr: "",
-      billType: "",
+      scanStr: '',
+      billType: '',
       billOptions: [
         {
-          value: "1",
-          label: "普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票"
+          value: '1',
+          label: '普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票'
         },
         {
-          value: "2",
-          label: "xx增值税(机动车/二手车销售发票),专用发票"
+          value: '2',
+          label: 'xx增值税(机动车/二手车销售发票),专用发票'
         }
       ]
-    };
+    }
   },
   mounted() {
-    this.$refs.scanStr.focus();
+    this.$refs.scanStr.focus()
   },
   methods: {
     changeT(val) {
-      console.log(val, this.beginInter);
-      this.scanStr = val;
-      let _this = this;
+      console.log(val, this.beginInter)
+      this.scanStr = val
+      const _this = this
       if (this.beginInter) {
-        this.beginInter = false;
+        this.beginInter = false
         setTimeout(function() {
-          _this.beginInter = true;
-          _this.scanQuery();
-        }, 600);
+          _this.beginInter = true
+          _this.scanQuery()
+        }, 600)
       }
     },
     // 判断是否录入
     fetchIsHave(type) {
-      console.log(type);
-      let code =
-        type == "scan"
-          ? this.scanStr.split(",")[3]
-          : this.ruleForm.invoiceNumber;
-      console.log(code);
-      queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
-        console.log(res);
+      console.log(type)
+      const code =
+        type == 'scan'
+          ? this.scanStr.split(',')[3]
+          : this.ruleForm.invoiceNumber
+      console.log(code)
+      queryData('/bill/getBillInfo', { code: code }, 'POST').then(res => {
+        console.log(res)
         if (res.code == 0) {
           this.choiceModel(
             JSON.parse(res.data.fp_detail.fp_detail).invoiceTypeCode,
             res.data,
             true
-          );
+          )
         } else {
-          if (type == "scan") {
-            this.queryByScan();
+          if (type == 'scan') {
+            this.queryByScan()
           } else {
-            this.queryByCode();
+            this.queryByCode()
           }
         }
-      });
+      })
     },
     getBillType(val) {
-      this.billType = val;
+      this.billType = val
     },
     // 手动查验
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.fetchIsHave("code");
+          this.fetchIsHave('code')
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
     // watch
     queryByCode() {
-      let token = localStorage.getItem("lsToken");
-      let queryparam = Object.assign(this.ruleForm, dwbm, { token: token });
-      console.log("请求参数", queryparam);
-      let _this = this;
-      queryData("/bill/queryBillByCode", queryparam, "post")
+      const token = localStorage.getItem('lsToken')
+      const queryparam = Object.assign(this.ruleForm, dwbm, { token: token })
+      console.log('请求参数', queryparam)
+      const _this = this
+      queryData('/bill/queryBillByCode', queryparam, 'post')
         .then(result => {
-          console.log("1232", result);
+          console.log('1232', result)
           if (result.code == 0) {
             _this.choiceModel(
               JSON.parse(result.data.invoiceResult).invoiceTypeCode,
               result.data.invoiceResult,
               false
-            );
+            )
           } else {
-            console.log(result.message);
-            _this.$message.error(result.message);
+            console.log(result.message)
+            _this.$message.error(result.message)
           }
         })
         .catch(err => {
-          _this.$message.error(err);
-        });
+          _this.$message.error(err)
+        })
     },
     // 扫码验证判断
     scanQuery() {
       if (this.scanStr) {
         // 是否存在
-        this.fetchIsHave("scan");
+        this.fetchIsHave('scan')
       }
     },
 
     // 根据扫码验证
     queryByScan() {
-      let queryparam = {
+      const queryparam = {
         scanStr: this.scanStr,
-        token: localStorage.getItem("lsToken")
-      };
-      console.log("123");
-      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
-        console.log(res);
+        token: localStorage.getItem('lsToken')
+      }
+      console.log('123')
+      queryData('/bill/queryBillByScan', queryparam, 'post').then(res => {
+        console.log(res)
         if (res.code == 0) {
-          if (res.data.resultCode == "1000") {
+          if (res.data.resultCode == '1000') {
             this.choiceModel(
               JSON.parse(res.data.invoiceResult).invoiceTypeCode,
               res.data.invoiceResult,
               false
-            );
+            )
           } else {
-            this.$message.error(res.message);
+            this.$message.error(res.message)
           }
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-      });
+      })
     },
     // 选择模板
     choiceModel(billType, data, isHave) {
-      console.log(billType);
-      if (billType == "01" || billType == "04" || billType == "10") {
+      console.log(billType)
+      if (billType == '01' || billType == '04' || billType == '10') {
         this.$router.push({
-          name: "普通发票结果",
-          params: { type: "scan", scanStr: data, isHave: isHave }
-        });
-      } else if (billType == "11") {
+          name: '普通发票结果',
+          params: { type: 'scan', scanStr: data, isHave: isHave }
+        })
+      } else if (billType == '11') {
         // 卷式发票
         this.$router.push({
-          name: "卷式发票结果",
-          params: { type: "scan", scanStr: data, isHave: isHave }
-        });
-      } else if (billType == "14") {
+          name: '卷式发票结果',
+          params: { type: 'scan', scanStr: data, isHave: isHave }
+        })
+      } else if (billType == '14') {
         // 卷式发票结果
         this.$router.push({
-          name: "通行证发票结果",
-          params: { type: "scan", scanStr: data, isHave: isHave }
-        });
+          name: '通行证发票结果',
+          params: { type: 'scan', scanStr: data, isHave: isHave }
+        })
       } else {
         this.$message.warning(
-          "目前仅支持查验普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票"
-        );
+          '目前仅支持查验普通发票/增值税电子发票/卷式普通发票/电子普通[通行费]发票'
+        )
       }
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">
