@@ -7,12 +7,7 @@
         </el-form-item>
         <el-form-item label="所在部门">
           <el-select v-model="form.bmbm" placeholder="所在部门">
-            <el-option
-              v-for="item in bmOptions"
-              :key="item.id"
-              :label="item.bmmc"
-              :value="item.id"
-            ></el-option>
+            <el-option v-for="item in bmOptions" :key="item.id" :label="item.bmmc" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -45,18 +40,27 @@
     </div>
     <!-- 修改新增弹出框 -->
     <el-dialog title="操作" :visible.sync="visible" width="20%">
-      <el-form :model="dialogForm">
-        <el-form-item label="员工名称" :label-width="formLabelWidth">
+      <el-form :model="dialogForm" ref="dialogForm">
+        <el-form-item
+          label="员工名称"
+          :label-width="formLabelWidth"
+          prop="zymc"
+          :rules="[
+              { required: true, message: '不能为空'},
+            ]"
+        >
           <el-input v-model="dialogForm.zymc" placeholder="请输入内容" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="所在部门" :label-width="formLabelWidth">
+        <el-form-item
+          label="所在部门"
+          :label-width="formLabelWidth"
+          prop="bmbm"
+          :rules="[
+              { required: true, message: '不能为空'},
+            ]"
+        >
           <el-select v-model="dialogForm.bmbm" placeholder="请选择所在部门">
-            <el-option
-              v-for="item in bmOptions"
-              :key="item.id"
-              :label="item.bmmc"
-              :value="item.id"
-            ></el-option>
+            <el-option v-for="item in bmOptions" :key="item.id" :label="item.bmmc" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth">
@@ -65,13 +69,14 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="visible = false">取 消</el-button>
-        <el-button type="primary" @click="saveOrUpdate">确 定</el-button>
+        <el-button type="primary" @click="saveOrUpdate('dialogForm')" :loading="isSave">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+const dwbm = { dwbm: localStorage.getItem("dwbm") };
 import { queryData } from "../../api/common";
 export default {
   data() {
@@ -80,18 +85,19 @@ export default {
         zymc: "",
         bmbm: ""
       },
+      isSave: false,
       total: 1,
       current: 1,
       bmOptions: [],
       tableData: [],
       dialogForm: {
-        zymc:'',
+        zymc: "",
         bmmc: "",
-        bmbm:'',
+        bmbm: "",
         bz: ""
       },
       visible: false,
-      formLabelWidth: "80px",
+      formLabelWidth: "80px"
     };
   },
   mounted() {
@@ -145,28 +151,68 @@ export default {
     addForm() {
       this.visible = true;
     },
-    saveOrUpdate() {
-      let param = {};
-      if (this.dialogForm.id) {
-        // 修改
-        param.id = this.dialogForm.id;
-      }
-      param = this.dialogForm;
-
-      queryData("/manager/saveOrUpdateZy", param, "POST")
-        .then(res => {
-          if (res.code == 0) {
-            this.$message.success("操作成功");
-            this.onSubmit();
-            this.visible = false;
-          } else {
-            this.$message.error(res.err);
-          }
+    deleteRow(row) {
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          queryData("/manager/deleteZy", row, "POST")
+            .then(res => {
+              if (res.code == 0) {
+                this.$message({
+                  type: "success",
+                  message: "删除成功"
+                });
+                this.onSubmit();
+              } else {
+                this.$message.error(res.message);
+              }
+            })
+            .catch(err => {
+              this.$message({
+                type: "error",
+                message: err
+              });
+            });
         })
         .catch(err => {
-          this.$message.error(err);
+          this.$message({
+            type: "info",
+            message: err
+          });
         });
     },
+    saveOrUpdate(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.isSave = true;
+          let param = Object.assign(this.dialogForm, dwbm);
+          if (this.dialogForm.id) {
+            // 修改
+            param.id = this.dialogForm.id;
+          }
+          queryData("/manager/saveOrUpdateZy", param, "POST")
+            .then(res => {
+              if (res.code == 0) {
+                this.$message.success("操作成功");
+                this.onSubmit();
+                this.visible = false;
+              } else {
+                this.$message.error(res.err);
+              }
+              this.isSave = false;
+            })
+            .catch(err => {
+              this.$message.error(err);
+              this.isSave = false;
+            });
+        } else {
+          return false;
+        }
+      });
+    }
   }
 };
 </script>

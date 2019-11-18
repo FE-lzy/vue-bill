@@ -52,20 +52,12 @@ export default {
     };
   },
 
-  created() {
-    this.fetchData();
-  },
   mounted() {
     this.getBillTypeCount();
   },
   methods: {
     changeMonth(){
       this.getBillTypeCount()
-    },
-    fetchData() {
-      transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8);
-      });
     },
     handleClick(tab, event) {
       this.getBillTypeCount();

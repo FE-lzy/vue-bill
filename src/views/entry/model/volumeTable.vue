@@ -139,7 +139,7 @@
         </el-form-item>
         <div style="text-align:center">
           <el-button type="primary" @click="saveBill('validForm')">录入</el-button>
-          <el-button>返回</el-button>
+          <el-button @click="backJump">返回</el-button>
         </div>
       </el-form>
     </div>
@@ -181,7 +181,7 @@ filters: {
 },
   beforeMount() {
     if (!this.$route.params.scanStr) {
-      this.$message.error("缺少参数");
+      this.$message.error("请先验证发票");
       this.$router.go(-1);
       return;
     }
@@ -193,6 +193,9 @@ filters: {
     this.handleUserInfo();
   },
   methods: {
+    backJump() {
+      this.$router.go(-1);
+    },
     getAllBm() {
       let param = { dwbm: localStorage.getItem("dwbm") };
       queryData("/manager/queryAllBm", param, "POST").then(res => {
@@ -289,18 +292,18 @@ filters: {
 .content {
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
   padding: 30px;
 }
 .left {
   padding: 10px;
-  min-width: 400px;
+  // min-width: 400px;
   background: #fff;
   border: 1px solid #eee;
 }
 .middle {
   padding: 23px;
-  min-width: 400px;
+  // min-width: 400px;
   background: #fff;
   border: 1px solid #eee;
   .el-row {
@@ -322,7 +325,7 @@ filters: {
 }
 .right {
   padding: 10px;
-  min-width: 300px;
+  // min-width: 300px;
 }
 .el-select{
   width: 80% !important;

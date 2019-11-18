@@ -348,7 +348,7 @@ export default {
   },
   beforeMount() {
     if (!this.$route.params.scanStr) {
-      this.$message.error("缺少参数");
+      this.$message.error("请先验证发票");
       this.$router.go(-1);
       return;
     }

@@ -3,16 +3,24 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <div class="grid-content">
-          <img src="@/assets/scan.jpg" style="width:100%" />
-          <el-input
-            @input="changeT"
-            type="textarea"
-            ref="scanStr"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="scanStr"
-          ></el-input>
-          <el-button @click="scanQuery">查询</el-button>
+          <h3 style="text-align:center;">扫描录入</h3>
+          <h4 style="text-align:center;">(请确保扫描设备已连接到我的电脑)</h4>
+          <div style="display:flex;justify-content: center;">
+            <el-input
+              @input="changeT"
+              type="textarea"
+              ref="scanStr"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请使用扫描设备扫描发票二维码，扫描过程请保持输入框聚焦状态"
+              v-model="scanStr"
+              style="text-align:center;"
+            ></el-input>
+          </div>
+
+          <h5></h5>
+          <img src="@/assets/scan1.png" style="width:100%" />
+
+          <!-- <el-button @click="scanQuery">查询</el-button> -->
         </div>
       </el-col>
       <el-col :span="12">
@@ -61,6 +69,7 @@
               <el-input type="text" v-model="ruleForm.invoiceNumber" placeholder="输入发票号码"></el-input>
             </el-form-item>
             <el-form-item
+              style="width:100%;"
               label="开票日期"
               prop="billTime"
               :rules="[
@@ -115,8 +124,8 @@ export default {
         invoiceAmount: "",
         checkCode: "440055"
       },
-      scanStr:
-        "01,04,1100162350,19452405,66.37,20190425,17832785219143376258,A8CC,\n",
+      beginInter: true,
+      scanStr: "",
       billType: "",
       billOptions: [
         {
@@ -135,15 +144,25 @@ export default {
   },
   methods: {
     changeT(val) {
+      console.log(val, this.beginInter);
       this.scanStr = val;
-      // this.scanQuery();
+      let _this = this;
+      if (this.beginInter) {
+        this.beginInter = false;
+        setTimeout(function() {
+          _this.beginInter = true;
+          _this.scanQuery();
+        }, 600);
+      }
     },
     // 判断是否录入
     fetchIsHave(type) {
       console.log(type);
       let code =
-        type == "scan" ? this.scanStr.split(",")[3] : this.ruleForm.invoiceNumber;
-        console.log(code);
+        type == "scan"
+          ? this.scanStr.split(",")[3]
+          : this.ruleForm.invoiceNumber;
+      console.log(code);
       queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
         console.log(res);
         if (res.code == 0) {
@@ -178,11 +197,11 @@ export default {
     queryByCode() {
       let token = localStorage.getItem("lsToken");
       let queryparam = Object.assign(this.ruleForm, dwbm, { token: token });
-      console.log('请求参数',queryparam);
+      console.log("请求参数", queryparam);
       let _this = this;
       queryData("/bill/queryBillByCode", queryparam, "post")
         .then(result => {
-          console.log('1232',result);
+          console.log("1232", result);
           if (result.code == 0) {
             _this.choiceModel(
               JSON.parse(result.data.invoiceResult).invoiceTypeCode,
@@ -232,7 +251,7 @@ export default {
     },
     // 选择模板
     choiceModel(billType, data, isHave) {
-    console.log(billType);
+      console.log(billType);
       if (billType == "01" || billType == "04" || billType == "10") {
         this.$router.push({
           name: "普通发票结果",
@@ -260,7 +279,18 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+.el-textarea__inner::-ms-input-placeholder{
+        text-align: center;
+}
+.el-textarea__inner::-webkit-input-placeholder{
+        text-align: center;
+}
+.el-date-editor.el-input,
+.el-date-editor.el-input__inner {
+  width: 100% !important;
+}
 .title {
   text-align: center;
   padding-top: 30px;
@@ -292,6 +322,12 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+  .el-textarea__inner {
+    width: 80% !important;
+  }
+  .el-textarea {
+    width: 80% !important;
+  }
 }
 .row-bg {
   padding: 10px 0;

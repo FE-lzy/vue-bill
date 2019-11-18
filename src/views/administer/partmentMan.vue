@@ -35,8 +35,15 @@
     </div>
     <!-- 修改新增弹出框 -->
     <el-dialog title="操作" :visible.sync="visible" width="20%">
-      <el-form :model="dialogForm">
-        <el-form-item label="部门名称" :label-width="formLabelWidth">
+      <el-form :model="dialogForm" ref="dialogForm">
+        <el-form-item
+          label="部门名称"
+          :label-width="formLabelWidth"
+          prop="bmmc"
+          :rules="[
+              { required: true, message: '不能为空'},
+            ]"
+        >
           <el-input v-model="dialogForm.bmmc" placeholder="请输入内容" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth">
@@ -45,7 +52,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="visible = false">取 消</el-button>
-        <el-button type="primary" @click="saveOrUpdate">确 定</el-button>
+        <el-button type="primary" @click="saveOrUpdate('dialogForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -105,28 +112,35 @@ export default {
     addForm() {
       this.visible = true;
     },
-    saveOrUpdate() {
-      let param = this.dialogForm;
-      if (this.dialogForm.id) {
-        // 修改
-        param.id = this.dialogForm.id;
-      }
-      
-      param.dwbm = localStorage.getItem('dwbm')
-        console.log(param);
-      queryData("/manager/saveOrUpdatePart", param, "POST")
-        .then(res => {
-          if (res.code == 0) {
-            this.$message.success("操作成功");
-            this.getAllBm();
-            this.visible = false;
-          } else {
-            this.$message.error(res.err);
+    saveOrUpdate(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let param = this.dialogForm;
+          if (this.dialogForm.id) {
+            // 修改
+            param.id = this.dialogForm.id;
           }
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
+
+          param.dwbm = localStorage.getItem("dwbm");
+          console.log(param);
+          queryData("/manager/saveOrUpdatePart", param, "POST")
+            .then(res => {
+              if (res.code == 0) {
+                this.$message.success("操作成功");
+                this.getAllBm();
+                this.dialogForm = {};
+                this.visible = false;
+              } else {
+                this.$message.error(res.message);
+              }
+            })
+            .catch(err => {
+              this.$message.error(err);
+            });
+        } else {
+          return false;
+        }
+      });
     },
     deleteRow(row) {
       this.$confirm("此操作将永久删除, 是否继续?", "提示", {
@@ -140,7 +154,7 @@ export default {
               if (res.code == 0) {
                 this.$message({
                   type: "success",
-                  message: "删除成功!"
+                  message: "删除成功"
                 });
                 this.getAllBm();
               } else {

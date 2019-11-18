@@ -106,7 +106,7 @@
       ></el-table-column>
       <el-table-column v-if="colData[2].istrue" prop="salesName" label="销售方名称"></el-table-column>
       <el-table-column v-if="colData[3].istrue" prop="totalTaxSum" label="价税合计"></el-table-column>
-      <el-table-column v-if="colData[4].istrue" prop="entryDate" sortable label="录入时间"></el-table-column>
+      <el-table-column v-if="colData[4].istrue" prop="entryDate" sortable label="录入时间" :formatter="formatEntryTime"></el-table-column>
       <el-table-column v-if="colData[5].istrue" prop="zymc" label="归属人"></el-table-column>
       <el-table-column v-if="colData[6].istrue" prop="bmmc" label="归属部门"></el-table-column>
       <el-table-column v-if="colData[7].istrue" prop="invoiceTypeName" label="发票名称"></el-table-column>
@@ -157,6 +157,14 @@ import common from "./model/common";
 import pass from "./model/pass";
 import volume from "./model/volume";
 import { queryData } from "../../api/common";
+function formateDate(datetime) {
+    function addDateZero(num) {
+        return (num < 10 ? "0" + num : num);
+    }
+    let d = new Date(datetime);
+    let formatdatetime = d.getFullYear() + '-' + addDateZero(d.getMonth() + 1) + '-' + addDateZero(d.getDate());
+    return formatdatetime;
+}
 export default {
   components: {
     common,
@@ -215,6 +223,9 @@ export default {
         } else {
           return cellValue;
         }
+      },
+      formatEntryTime:function(row, column, cellValue) {
+        return formateDate(cellValue)
       },
       isBillMark: function(row, column, cellValue) {
         return cellValue == "Y" ? "是" : "否";

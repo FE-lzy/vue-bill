@@ -16,11 +16,23 @@
         </el-table-column>
       </el-table>
       <el-dialog title="修改" :visible.sync="dialog" width="30%">
-        <el-form label-width="120px" :model="form">
-          <el-form-item label="单位名称">
+        <el-form label-width="120px" ref="form" :model="form">
+          <el-form-item
+            label="单位名称"
+            prop="dwmc"
+            :rules="[
+              { required: true, message: '不能为空'},
+            ]"
+          >
             <el-input v-model="form.dwmc"></el-input>
           </el-form-item>
-          <el-form-item label="税号">
+          <el-form-item
+            label="税号"
+            prop="taxnum"
+            :rules="[
+              { required: true, message: '不能为空'},
+            ]"
+          >
             <el-input v-model="form.taxnum"></el-input>
           </el-form-item>
           <el-form-item label="地址">
@@ -40,7 +52,7 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="dialog=false">取消</el-button>
-            <el-button type="primary" @click="save">保存</el-button>
+            <el-button type="primary" @click="save('form')">保存</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -86,17 +98,23 @@ export default {
       console.log(row);
       this.form = row;
     },
-    save(){
-        let param = Object.assign(dwbm,this.form)
-        queryData('/manager/updateDw',param,"POST").then(res=>{
-            if(res.code == 0){
-                this.$message.success('操作成功')
-                this.getDwInfo();
-                this.dialog = false
+    save(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let param = Object.assign(dwbm, this.form);
+          queryData("/manager/updateDw", param, "POST").then(res => {
+            if (res.code == 0) {
+              this.$message.success("操作成功");
+              this.getDwInfo();
+              this.dialog = false;
             } else {
-                this.$message.error(res.message)
+              this.$message.error(res.message);
             }
-        })
+          });
+        } else {
+          return false;
+        }
+      });
     }
   }
 };
