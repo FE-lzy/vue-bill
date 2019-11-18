@@ -179,6 +179,12 @@ export const constantRoutes = [
         name: '单位设置',
         meta: { title: '单位设置', icon: 'form', affix: true }
       },
+      {
+        path: 'resetPwd',
+        component: () => import('@/views/administer/resetPwd'),
+        name: '修改密码',
+        meta: { title: '修改密码', icon: 'form', affix: false }
+      },
     ]
   },
 ]
@@ -188,27 +194,27 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  // {
-  //   path: '/permission',
-  //   component: Layout,
-  //   redirect: '/permission/page',
-  //   alwaysShow: true, // will always show the root menu
-  //   name: 'Permission',
-  //   meta: {
-  //     title: 'Permission',
-  //     icon: 'lock',
-  //     roles: ['admin', 'editor'] // you can set roles in root nav
-  //   },
-  //   children: [
-  //     {
-  //       path: 'page',
-  //       component: () => import('@/views/permission/page'),
-  //       name: 'PagePermission',
-  //       meta: {
-  //         title: 'Page Permission',
-  //         roles: ['admin'] // or you can only set roles in sub nav
-  //       }
-  //     },
+  {
+    path: '/admin',
+    component: Layout,
+    redirect: '/admin/userManager',
+    alwaysShow: true, // will always show the root menu
+    name: '管理员',
+    meta: {
+      title: '管理员',
+      icon: 'user',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'userManager',
+        component: () => import('@/views/admin/userManager'),
+        name: '用户管理',
+        meta: {
+          title: '用户管理',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
   //     {
   //       path: 'directive',
   //       component: () => import('@/views/permission/directive'),
@@ -227,8 +233,8 @@ export const asyncRoutes = [
   //         roles: ['admin']
   //       }
   //     }
-  //   ]
-  // },
+    ]
+  },
 
   // {
   //   path: '/error',

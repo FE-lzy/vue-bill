@@ -481,7 +481,7 @@ export default {
 
 <style lang="scss">
 .purple {
-  color: purple;
+  color: rgb(22, 58, 155);
 }
 .content {
   display: flex;

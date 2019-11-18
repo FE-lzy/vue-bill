@@ -24,9 +24,13 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
+          
           <router-link to="/profile/index">
-            <el-dropdown-item>admin</el-dropdown-item>
+            <el-dropdown-item>{{username}}</el-dropdown-item>
           </router-link>
+          <el-dropdown-item>
+            <router-link to="/administer/resetPwd">修改密码</router-link>
+          </el-dropdown-item>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">安全退出</span>
           </el-dropdown-item>
@@ -60,6 +64,11 @@ export default {
       'avatar',
       'device'
     ])
+  },
+  data(){
+    return{
+      username:localStorage.getItem('name')
+    }
   },
   methods: {
     toggleSideBar() {

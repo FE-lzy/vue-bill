@@ -71,31 +71,18 @@ export default {
   name: "Login",
   components: { SocialSign },
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error("请输入用户名"));
-      } else {
-        callback();
-      }
-    };
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error("请输入密码"));
-      } else {
-        callback();
-      }
-    };
+    
     return {
       loginForm: {
-        username: "admin",
-        password: "123456"
+        username: "",
+        password: ""
       },
       loginRules: {
         username: [
-          { required: true, trigger: "blur", validator: validateUsername }
+          { required: true, trigger: "blur" }
         ],
         password: [
-          { required: true, trigger: "blur", validator: validatePassword }
+          { required: true, trigger: "blur" }
         ]
       },
       passwordType: "password",
@@ -170,7 +157,8 @@ export default {
               });
               this.loading = false;
             })
-            .catch(() => {
+            .catch((err) => {
+              this.$message.error(err)
               this.loading = false;
             });
         } else {

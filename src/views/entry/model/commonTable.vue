@@ -29,15 +29,15 @@
       </div>
 
       <div class="box">
-        <el-row type="flex" style="border: 1px solid #ccc">
+        <el-row type="flex" style="border: 1px solid #945555">
           <el-col :span="1">
-            <div class="topTitle" style="border-right:1px solid #ccc">
+            <div class="topTitle" style="border-right:1px solid #945555">
               购
               <br>买
               <br>方
             </div>
           </el-col>
-          <el-col :span="16" style="border-right:1px solid #ccc">
+          <el-col :span="16" style="border-right:1px solid #945555">
             <div class="buyDetail">
               <el-row>
                 <el-col :span="6">名称：</el-col>
@@ -58,7 +58,7 @@
             </div>
           </el-col>
           <el-col :span="1">
-            <div class="topTitle" style="border-right:1px solid #ccc">
+            <div class="topTitle" style="border-right:1px solid #945555">
               密
               <br>码
               <br>区
@@ -197,24 +197,24 @@
         </el-row>
         <el-row
           type="flex"
-          style="border: 1px solid #ccc;height:40px;line-height:40px;text-align:center"
+          style="border: 1px solid #945555;height:40px;line-height:40px;text-align:center;border-bottom:none;"
         >
-          <el-col :span="5" style="border-right:1px solid #ccc">价格合计(大写)</el-col>
+          <el-col :span="5" style="border-right:1px solid #945555">价格合计(大写)</el-col>
           <el-col :span="10" class="purple">{{ bill.chineseTaxSum }}</el-col>
           <el-col :span="9">
             (小写)
             <span class="purple">￥{{ bill.totalTaxSum }}</span>
           </el-col>
         </el-row>
-        <el-row type="flex" style="border: 1px solid #ccc">
-          <el-col :span="1" style="border-right:1px solid #ccc">
+        <el-row type="flex" style="border: 1px solid #945555">
+          <el-col :span="1" style="border-right:1px solid #945555">
             <div class="topTitle">
               销
               <br>售
               <br>方
             </div>
           </el-col>
-          <el-col :span="16" style="border-right:1px solid #ccc">
+          <el-col :span="16" style="border-right:1px solid #945555">
             <div class="buyDetail">
               <el-row>
                 <el-col :span="6">名称：</el-col>
@@ -235,7 +235,7 @@
             </div>
           </el-col>
           <el-col :span="1">
-            <div class="topTitle" style="border-right:1px solid #ccc">
+            <div class="topTitle" style="border-right:1px solid #945555">
               备
               <br>注
               <br>区
@@ -451,7 +451,8 @@ export default {
 
 <style lang="scss" scoped>
 .purple {
-  color: rgb(114, 66, 114);
+  color: rgb(22, 58, 155);
+  // color: #945555;
 }
 .content {
   display: flex;
@@ -462,6 +463,7 @@ export default {
   padding: 10px;
   width: 60%;
   min-width: 820px;
+  border-color: #8F8077
 }
 .right {
   padding: 10px;
@@ -490,7 +492,7 @@ export default {
   .billTitle {
     text-align: center;
     font-size: 20px;
-    color: blue;
+    color: #945555;
     font-weight: 400;
   }
   .billinfo {
@@ -510,6 +512,7 @@ export default {
 .box {
   width: 100%;
   font-size: 13px;
+  color: #945555;
   .el-row {
     margin-bottom: 0 !important;
   }
@@ -518,8 +521,8 @@ export default {
   }
   .goodsDetail {
     height: auto;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
+    border-left: 1px solid #945555;
+    border-right: 1px solid #945555;
   }
   .goodsDetail .el-row {
     text-align: center;

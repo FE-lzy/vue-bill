@@ -187,7 +187,7 @@
         </el-row>
         <el-row
           type="flex"
-          style="border: 1px solid #ccc;height:40px;line-height:40px;text-align:center"
+          style="border: 1px solid #ccc;border-bottom:none;height:40px;line-height:40px;text-align:center"
         >
           <el-col :span="5" style="border-right:1px solid #ccc">价格合计(大写)</el-col>
           <el-col :span="10" class="purple">六百五十体验版</el-col>
@@ -429,7 +429,7 @@ export default {
 
 <style lang="scss" scoped>
 .purple {
-  color: rgb(114, 66, 114);
+  color: rgb(22, 58, 155);;
 }
 .content {
   display: flex;
@@ -468,7 +468,7 @@ export default {
   .billTitle {
     text-align: center;
     font-size: 20px;
-    color: blue;
+    color: #945555;
     font-weight: 400;
   }
   .billinfo {
@@ -488,6 +488,7 @@ export default {
 .box {
   width: 100%;
   font-size: 13px;
+  color: #945555;
   .el-row {
     margin-bottom: 0 !important;
   }
