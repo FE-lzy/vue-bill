@@ -58,7 +58,7 @@ export default {
           left: '2%',
           right: '2%',
           bottom: '3%',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: [{
           type: 'category',

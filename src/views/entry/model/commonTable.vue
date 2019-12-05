@@ -33,8 +33,8 @@
           <el-col :span="1">
             <div class="topTitle" style="border-right:1px solid #945555">
               购
-              <br>买
-              <br>方
+              <br />买
+              <br />方
             </div>
           </el-col>
           <el-col :span="16" style="border-right:1px solid #945555">
@@ -49,26 +49,26 @@
               </el-row>
               <el-row>
                 <el-col :span="6">地址、电话：</el-col>
-                <el-col :span="18" />
+                <el-col :span="18" class="purple">{{ bill.taxpayerAddressOrId }}</el-col>
               </el-row>
               <el-row>
                 <el-col :span="6">开户行及账号：</el-col>
-                <el-col :span="18" />
+                <el-col :span="18" class="purple">{{ bill.taxpayerBankAccount }}</el-col>
               </el-row>
             </div>
           </el-col>
           <el-col :span="1">
             <div class="topTitle" style="border-right:1px solid #945555">
               密
-              <br>码
-              <br>区
+              <br />码
+              <br />区
             </div>
           </el-col>
           <el-col :span="6" style="height:100%">
             <div />
           </el-col>
         </el-row>
-        <br>
+        <br />
         <el-row type="flex" style="margin-top:-15px;" class="goodsDetail">
           <el-col :span="5">
             <el-row>
@@ -210,8 +210,8 @@
           <el-col :span="1" style="border-right:1px solid #945555">
             <div class="topTitle">
               销
-              <br>售
-              <br>方
+              <br />售
+              <br />方
             </div>
           </el-col>
           <el-col :span="16" style="border-right:1px solid #945555">
@@ -237,8 +237,8 @@
           <el-col :span="1">
             <div class="topTitle" style="border-right:1px solid #945555">
               备
-              <br>注
-              <br>区
+              <br />注
+              <br />区
             </div>
           </el-col>
           <el-col :span="6" style="height:100%">
@@ -253,21 +253,22 @@
         <h2 style="text-align:center">发票录入</h2>
         <el-form-item
           label="发票归属部门"
+          prop="fp_gsbm"
           :rules="[
             { required: true, message: '请输入', trigger: 'blur' },
           ]"
         >
-          <el-select v-model="form.fp_gsbm" filterable placeholder="所在部门">
-            <el-option v-for="item in bmOptions" :key="item.id" :label="item.bmmc" :value="item.id" />
+          <el-select v-model="form.fp_gsbm" filterable placeholder="所在部门" :disabled="isHave">
+            <el-option
+              v-for="item in bmOptions"
+              :key="item.id"
+              :label="item.bmmc"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="发票归属人"
-          :rules="[
-            { required: true, message: '请输入', trigger: 'blur' },
-          ]"
-        >
-          <el-select v-model="form.fp_gsr" filterable placeholder="发票归属人">
+        <el-form-item label="发票归属人">
+          <el-select v-model="form.fp_gsr" filterable placeholder="发票归属人" :disabled="isHave">
             <el-option
               v-for="item in userOptions"
               :key="item.id"
@@ -278,10 +279,16 @@
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input v-model="form.fp_bz" type="textarea" :rows="2" placeholder="请输入内容" />
+          <el-input
+            v-model="form.fp_bz"
+            type="textarea"
+            :rows="2"
+            placeholder="请输入内容"
+            :disabled="isHave"
+          />
         </el-form-item>
         <div style="text-align:center">
-          <el-button type="primary" @click="saveBill('validForm')">录入</el-button>
+          <el-button type="primary" @click="saveBill('validForm')" v-if="!isHave">录入</el-button>
           <el-button @click="backJump()">返回</el-button>
         </div>
       </el-form>
@@ -289,164 +296,185 @@
   </div>
 </template>
 <script>
-const dwbm = { dwbm: localStorage.getItem('dwbm') }
-import { queryData } from '@/api/common'
-import { numberToUpper } from '@/utils/arabia.js'
+const dwbm = { dwbm: localStorage.getItem("dwbm") };
+import { Message } from "element-ui";
+import { queryData } from "@/api/common";
+import { numberToUpper } from "@/utils/arabia.js";
 export default {
-  name: 'Bill',
+  name: "Bill",
   data() {
     return {
-      labelPosition: 'right',
+      labelPosition: "right",
       form: {
-        fp_gsr: '',
-        fp_gsbm: '',
-        fp_bz: ''
+        fp_gsr: "",
+        fp_gsbm: "",
+        fp_bz: ""
       },
-      billResJSON: '',
+      isHave: false,
+      billResJSON: "",
       bill: {
-        invoiceTypeName: '',
-        invoiceDataCode: '', // 开票代码
-        invoiceNumber: '', // 开票号码
-        billingTime: '', // 开票时间
-        checkCode: '', // 校验码
-        taxDiskCode: '', // 机器编号
-        purchaserName: '', // 名称
-        taxpayerNumber: '', // 纳税人识别号
-        salesName: '', // 销方名称
-        salesTaxpayerNum: '', // 销方纳税人识别号
-        salesTaxpayerBankAccount: '', // 销方银行账户
-        salesTaxpayerAddress: '', // 销方地址
-        totalTaxNum: '', // 税额
-        totalTaxSum: '', // 价格总计
-        totalAmount: '', // 不含税价(金额)
-        invoiceRemarks: '', // 备注
+        invoiceTypeName: "",
+        invoiceDataCode: "", // 开票代码
+        invoiceNumber: "", // 开票号码
+        billingTime: "", // 开票时间
+        checkCode: "", // 校验码
+        taxDiskCode: "", // 机器编号
+        purchaserName: "", // 名称
+        taxpayerNumber: "", // 纳税人识别号
+        salesName: "", // 销方名称
+        salesTaxpayerNum: "", // 销方纳税人识别号
+        salesTaxpayerBankAccount: "", // 销方银行账户
+        salesTaxpayerAddress: "", // 销方地址
+        totalTaxNum: "", // 税额
+        totalTaxSum: "", // 价格总计
+        totalAmount: "", // 不含税价(金额)
+        invoiceRemarks: "", // 备注
         detailData: [
           {
-            goodserviceName: '',
-            sum: '', // 总和
-            number: '', // 数量
-            taxRate: '', // 税率
-            model: '', // 型号
-            price: '', // 单价
-            tax: '', // 税额
-            unit: '' // 单位
+            goodserviceName: "",
+            sum: "", // 总和
+            number: "", // 数量
+            taxRate: "", // 税率
+            model: "", // 型号
+            price: "", // 单价
+            tax: "", // 税额
+            unit: "" // 单位
           }
         ]
       },
       bmOptions: [],
       userOptions: []
-    }
+    };
   },
   beforeMount() {
     if (!this.$route.params.scanStr) {
-      this.$message.error('请先验证发票')
-      this.$router.go(-1)
-      return
+      this.$message.error("请先验证发票");
+      this.$router.go(-1);
+      return;
     }
-    this.getAllUser()
-    this.getAllBm()
+    this.getAllUser();
+    this.getAllBm();
   },
+
   mounted() {
-    this.handleBillInfo()
-    this.handleUserInfo()
+    this.handleBillInfo();
+    this.handleUserInfo();
+  },
+  destroyed() {
+    Message.closeAll();
   },
   methods: {
     backJump() {
-      this.$router.go(-1)
+      Message.closeAll();
+      this.$router.go(-1);
     },
     getAllBm() {
-      const param = { dwbm: localStorage.getItem('dwbm') }
-      queryData('/manager/queryAllBm', param, 'POST').then(res => {
+      const param = { dwbm: localStorage.getItem("dwbm") };
+      queryData("/manager/queryAllBm", param, "POST").then(res => {
         if (res.code == 0) {
-          this.bmOptions = res.data.data
+          this.bmOptions = res.data.data;
         }
-      })
+      });
     },
     getAllUser() {
       const param = {
-        dwbm: localStorage.getItem('dwbm'),
+        dwbm: localStorage.getItem("dwbm"),
         bmbm: this.form.fp_gsbm
-      }
-      queryData('/manager/queryAllUser', param, 'POST').then(res => {
+      };
+      queryData("/manager/queryAllUser", param, "POST").then(res => {
         if (res.code == 0) {
-          this.userOptions = res.data
+          this.userOptions = res.data;
         }
-      })
+      });
     },
 
     handleBillInfo() {
       if (this.$route.params.scanStr) {
-        let detail = this.$route.params.scanStr
+        let detail = this.$route.params.scanStr;
         if (this.$route.params.isHave) {
-          this.$message.warning('发票已存在，请勿重复录入')
-          detail = this.$route.params.scanStr.fp_detail.fp_detail
+          this.isHave = true;
+          this.$message.warning({
+            showClose: true,
+            message: "发票已存在，请勿重复录入",
+            duration: 0
+          });
+          detail = this.$route.params.scanStr.fp_detail.fp_detail;
         }
-        this.billResJSON = detail
-        console.log('table:', detail)
-        detail = JSON.parse(detail)
-        this.bill.invoiceTypeName = detail.invoiceTypeName
-        this.bill.invoiceDataCode = detail.invoiceDataCode // 发票代码
-        this.bill.invoiceNumber = detail.invoiceNumber // 发票号码
-        this.bill.billingTime = detail.billingTime // 开票时间
-        this.bill.checkCode = detail.checkCode // 校验码
-        this.bill.taxDiskCode = detail.taxDiskCode // 机器编号
-        this.bill.purchaserName = detail.purchaserName // 名称
-        this.bill.taxpayerNumber = detail.taxpayerNumber // 纳税人识别号
+        this.billResJSON = detail;
+        console.log("table:", detail);
+        detail = JSON.parse(detail);
+        this.bill.invoiceTypeName = detail.invoiceTypeName;
+        this.bill.invoiceDataCode = detail.invoiceDataCode; // 发票代码
+        this.bill.invoiceNumber = detail.invoiceNumber; // 发票号码
+        this.bill.billingTime = detail.billingTime; // 开票时间
+        this.bill.checkCode = detail.checkCode; // 校验码
+        this.bill.taxDiskCode = detail.taxDiskCode; // 机器编号
+        this.bill.purchaserName = detail.purchaserName; // 名称
+        this.bill.taxpayerNumber = detail.taxpayerNumber; // 纳税人识别号
+        this.bill.taxpayerAddressOrId = detail.taxpayerAddressOrId; //买方电话地址
+        this.bill.taxpayerBankAccount = detail.taxpayerBankAccount; //买方银行账户
+        this.bill.salesName = detail.salesName; // 销方名称
+        this.bill.salesTaxpayerNum = detail.salesTaxpayerNum; // 销方纳税人识别号
+        this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount; // 销方银行账户
+        this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress; // 销方地址
 
-        this.bill.salesName = detail.salesName // 销方名称
-        this.bill.salesTaxpayerNum = detail.salesTaxpayerNum // 销方纳税人识别号
-        this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount // 销方银行账户
-        this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress // 销方地址
-
-        this.bill.totalTaxNum = detail.totalTaxNum
-        this.bill.totalTaxSum = detail.totalTaxSum
-        this.bill.totalAmount = detail.totalAmount
-        this.bill.invoiceRemarks = detail.invoiceRemarks
-        this.bill.detailData = detail.invoiceDetailData
-        console.log(parseFloat(detail.totalTaxSum))
-        this.bill.chineseTaxSum = numberToUpper(parseFloat(detail.totalTaxSum))
+        this.bill.totalTaxNum = detail.totalTaxNum;
+        this.bill.totalTaxSum = detail.totalTaxSum;
+        this.bill.totalAmount = detail.totalAmount;
+        this.bill.invoiceRemarks = detail.invoiceRemarks;
+        this.bill.detailData = detail.invoiceDetailData;
+        console.log(parseFloat(detail.totalTaxSum));
+        this.bill.chineseTaxSum = numberToUpper(parseFloat(detail.totalTaxSum));
       }
     },
+
     handleUserInfo() {
       if (this.$route.params.isHave) {
-        const data = this.$route.params.scanStr
-        console.log(data.fp_gsr)
-        if (data.fp_gsr) {
-          this.form.fp_gsr = data.fp_gsr
-          this.form.fp_gsbm = data.fp_gsbm
-          this.form.fp_bz = data.fp_bz
+        const data = this.$route.params.scanStr;
+        console.log(data);
+        if (data.fp_gsbm) {
+          this.form.fp_gsr = data.fp_gsr;
+          this.form.fp_gsbm = data.fp_gsbm;
+          this.form.fp_bz = data.fp_bz == "undefined" ? "" : data.fp_bz;
         }
       }
     },
     saveBill(formName) {
-      console.log(formName)
+      console.log(formName);
       // 判断是否空对象 console.log(Object.keys(this.billResJSON).length);
-      if (this.billResJSON == '') {
-        this.$message.error('发票信息为空,请先验证发票')
-        return
+      if (this.billResJSON == "") {
+        this.$message.error("发票信息为空,请先验证发票");
+        return;
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = Object.assign(
             this.form,
             { billInfo: this.billResJSON },
-            { uid: localStorage.getItem('userId') },
+            { uid: localStorage.getItem("userId") },
             dwbm
-          )
-          console.log(param)
-          queryData('/bill/saveBill', param, 'POST').then(res => {
-            if (res.code == 0) {
-              this.$message.success('操作成功')
-              this.$router.go(-1)
-            } else {
-              this.$message.error(res.message)
-            }
-          })
+          );
+          queryData("/bill/saveBill", param, "POST")
+            .then(res => {
+              console.log(res);
+              if (res.code == 0) {
+                this.$message.success("操作成功");
+                let _this = this;
+                setTimeout(function() {
+                  _this.$router.go(-1);
+                }, 600);
+              } else {
+                this.$message.error(res.message);
+              }
+            })
+            .catch(err => {
+              console.log("save错误", err);
+            });
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -463,7 +491,7 @@ export default {
   padding: 10px;
   width: 60%;
   min-width: 820px;
-  border-color: #8F8077
+  border-color: #8f8077;
 }
 .right {
   padding: 10px;

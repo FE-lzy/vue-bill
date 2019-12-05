@@ -55,7 +55,7 @@ export const constantRoutes = [
     path: '/entry',
     component: Layout,
     redirect: '/entry/scan',
-    alwaysShow: true, 
+    alwaysShow: true,
     meta: {
       title: '发票录入',
       icon: 'edit',
@@ -71,30 +71,36 @@ export const constantRoutes = [
         path: 'billResult',
         component: () => import('@/views/entry/billResult'),
         name: '结果',
-        hidden:true,
+        hidden: true,
         meta: { title: '结果', icon: 'dashboard', affix: false }
       },
       {
         path: 'commonTable',
         component: () => import('@/views/entry/model/commonTable'),
         name: '普通发票结果',
-        hidden:true,
+        hidden: true,
         meta: { title: '普通发票结果', icon: 'dashboard', affix: false }
       },
       {
         path: 'volumeTable',
         component: () => import('@/views/entry/model/volumeTable'),
         name: '卷式发票结果',
-        hidden:true,
+        hidden: true,
         meta: { title: '卷式发票结果', icon: 'dashboard', affix: false }
       },
       {
         path: 'passTable',
         component: () => import('@/views/entry/model/passTable'),
         name: '通行证发票结果',
-        hidden:true,
+        hidden: true,
         meta: { title: '通行证发票结果', icon: 'dashboard', affix: false }
       },
+      {
+        path: 'iden_tntry',
+        component: () => import('@/views/entry/iden_entry'),
+        name: '识别录入',
+        meta: { title: '识别录入', icon: 'dashboard', affix: true }
+      }
       // {
       //   path: 'other',
       //   component: () => import('@/views/entry/other'),
@@ -107,19 +113,13 @@ export const constantRoutes = [
       //   name: '连续扫描',
       //   meta: { title: '连续扫描', icon: 'dashboard', affix: true }
       // },
-      // {
-      //   path: 'iden_tntry',
-      //   component: () => import('@/views/entry/iden_tntry'),
-      //   name: '识别录入',
-      //   meta: { title: '识别录入', icon: 'dashboard', affix: true }
-      // }
     ]
   },
   {
     path: '/manager',
     component: Layout,
     redirect: '/manager/bill_query',
-    alwaysShow: true, 
+    alwaysShow: true,
     meta: {
       title: '发票管理',
       icon: 'list',
@@ -155,7 +155,7 @@ export const constantRoutes = [
     path: '/administer',
     component: Layout,
     redirect: '/administer/userMan',
-    alwaysShow: true, 
+    alwaysShow: true,
     meta: {
       title: '系统管理',
       icon: 'example',
@@ -183,6 +183,7 @@ export const constantRoutes = [
         path: 'resetPwd',
         component: () => import('@/views/administer/resetPwd'),
         name: '修改密码',
+        hidden: true,
         meta: { title: '修改密码', icon: 'form', affix: false }
       },
     ]
@@ -215,24 +216,24 @@ export const asyncRoutes = [
           roles: ['admin'] // or you can only set roles in sub nav
         }
       },
-  //     {
-  //       path: 'directive',
-  //       component: () => import('@/views/permission/directive'),
-  //       name: 'DirectivePermission',
-  //       meta: {
-  //         title: 'Directive Permission'
-  //         // if do not set roles, means: this page does not require permission
-  //       }
-  //     },
-  //     {
-  //       path: 'role',
-  //       component: () => import('@/views/permission/role'),
-  //       name: 'RolePermission',
-  //       meta: {
-  //         title: 'Role Permission',
-  //         roles: ['admin']
-  //       }
-  //     }
+      //     {
+      //       path: 'directive',
+      //       component: () => import('@/views/permission/directive'),
+      //       name: 'DirectivePermission',
+      //       meta: {
+      //         title: 'Directive Permission'
+      //         // if do not set roles, means: this page does not require permission
+      //       }
+      //     },
+      //     {
+      //       path: 'role',
+      //       component: () => import('@/views/permission/role'),
+      //       name: 'RolePermission',
+      //       meta: {
+      //         title: 'Role Permission',
+      //         roles: ['admin']
+      //       }
+      //     }
     ]
   },
 

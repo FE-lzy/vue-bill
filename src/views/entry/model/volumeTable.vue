@@ -110,21 +110,22 @@
         <h2 style="text-align:center">发票录入</h2>
         <el-form-item
           label="发票归属部门"
+          prop="fp_gsbm"
           :rules="[
             { required: true, message: '请输入', trigger: 'blur' },
           ]"
         >
-          <el-select v-model="form.fp_gsbm" filterable placeholder="所在部门">
-            <el-option v-for="item in bmOptions" :key="item.id" :label="item.bmmc" :value="item.id" />
+          <el-select v-model="form.fp_gsbm" filterable placeholder="所在部门" :disabled="isHave">
+            <el-option
+              v-for="item in bmOptions"
+              :key="item.id"
+              :label="item.bmmc"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="发票归属人"
-          :rules="[
-            { required: true, message: '请输入', trigger: 'blur' },
-          ]"
-        >
-          <el-select v-model="form.fp_gsr" filterable placeholder="发票归属人">
+        <el-form-item label="发票归属人">
+          <el-select v-model="form.fp_gsr" filterable placeholder="发票归属人" :disabled="isHave">
             <el-option
               v-for="item in userOptions"
               :key="item.id"
@@ -135,10 +136,16 @@
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input v-model="form.fp_bz" type="textarea" :rows="2" placeholder="请输入内容" />
+          <el-input
+            v-model="form.fp_bz"
+            type="textarea"
+            :rows="2"
+            placeholder="请输入内容"
+            :disabled="isHave"
+          />
         </el-form-item>
         <div style="text-align:center">
-          <el-button type="primary" @click="saveBill('validForm')">录入</el-button>
+          <el-button type="primary" @click="saveBill('validForm')" v-if="!isHave">录入</el-button>
           <el-button @click="backJump">返回</el-button>
         </div>
       </el-form>
@@ -147,145 +154,159 @@
 </template>
 
 <script>
-const dwbm = { dwbm: localStorage.getItem('dwbm') }
-import { queryData } from '@/api/common'
+const dwbm = { dwbm: localStorage.getItem("dwbm") };
+import { Message } from 'element-ui';
+import { queryData } from "@/api/common";
 export default {
-  name: 'Volume',
+  name: "Volume",
 
   filters: {
     numFilter(value) {
-      let realVal = ''
+      let realVal = "";
       if (value) {
-      // 截取当前数据到小数点后两位
-        realVal = parseFloat(value).toFixed(2)
+        // 截取当前数据到小数点后两位
+        realVal = parseFloat(value).toFixed(2);
       } else {
-        realVal = '--'
+        realVal = "--";
       }
-      return realVal
+      return realVal;
     }
   },
   data() {
     return {
-      labelPosition: 'right',
+      labelPosition: "right",
       form: {
-        fp_gsr: '',
-        fp_gsbm: '',
-        fp_bz: ''
+        fp_gsr: "",
+        fp_gsbm: "",
+        fp_bz: ""
       },
-      bill: {
-
-      },
+      bill: {},
+      isHave: false,
       bmOptions: [],
       userOptions: []
-    }
+    };
   },
   beforeMount() {
     if (!this.$route.params.scanStr) {
-      this.$message.error('请先验证发票')
-      this.$router.go(-1)
-      return
+      this.$message.error("请先验证发票");
+      this.$router.go(-1);
+      return;
     }
-    this.getAllUser()
-    this.getAllBm()
+    this.getAllUser();
+    this.getAllBm();
   },
   mounted() {
-    this.handleBillInfo()
-    this.handleUserInfo()
+    this.handleBillInfo();
+    this.handleUserInfo();
+  },
+  destroyed(){
+    Message.closeAll() 
   },
   methods: {
     backJump() {
-      this.$router.go(-1)
+      Message.closeAll() 
+      this.$router.go(-1);
     },
     getAllBm() {
-      const param = { dwbm: localStorage.getItem('dwbm') }
-      queryData('/manager/queryAllBm', param, 'POST').then(res => {
+      const param = { dwbm: localStorage.getItem("dwbm") };
+      queryData("/manager/queryAllBm", param, "POST").then(res => {
         if (res.code == 0) {
-          this.bmOptions = res.data.data
+          this.bmOptions = res.data.data;
         }
-      })
+      });
     },
     getAllUser() {
       const param = {
-        dwbm: localStorage.getItem('dwbm'),
+        dwbm: localStorage.getItem("dwbm"),
         bmbm: this.form.fp_gsbm
-      }
-      queryData('/manager/queryAllUser', param, 'POST').then(res => {
+      };
+      queryData("/manager/queryAllUser", param, "POST").then(res => {
         if (res.code == 0) {
-          this.userOptions = res.data
+          this.userOptions = res.data;
         }
-      })
+      });
     },
     handleBillInfo() {
       if (this.$route.params.scanStr) {
-        let detail = this.$route.params.scanStr
+        let detail = this.$route.params.scanStr;
         if (this.$route.params.isHave) {
-          this.$message.warning('发票已存在，请勿重复录入')
-          detail = this.$route.params.scanStr.fp_detail.fp_detail
+          this.$message.warning({
+            showClose: true,
+            message: "发票已存在，请勿重复录入",
+            duration: 0
+          });
+
+          this.isHave = true;
+          detail = this.$route.params.scanStr.fp_detail.fp_detail;
         }
-        this.billResJSON = detail
-        detail = JSON.parse(detail)
-        this.bill.invoiceTypeName = detail.invoiceTypeName
-        this.bill.invoiceDataCode = detail.invoiceDataCode // 发票代码
-        this.bill.invoiceNumber = detail.invoiceNumber // 发票号码
-        this.bill.billingTime = detail.billingTime // 开票时间
-        this.bill.checkCode = detail.checkCode // 校验码
-        this.bill.taxDiskCode = detail.taxDiskCode // 机器编号
-        this.bill.purchaserName = detail.purchaserName // 名称
-        this.bill.taxpayerNumber = detail.taxpayerNumber // 纳税人识别号
+        this.billResJSON = detail;
+        detail = JSON.parse(detail);
+        console.log(detail);
+        this.bill.invoiceTypeName = detail.invoiceTypeName;
+        this.bill.invoiceDataCode = detail.invoiceDataCode; // 发票代码
+        this.bill.invoiceNumber = detail.invoiceNumber; // 发票号码
+        this.bill.billingTime = detail.billingTime; // 开票时间
+        this.bill.checkCode = detail.checkCode; // 校验码
+        this.bill.taxDiskCode = detail.taxDiskCode; // 机器编号
+        this.bill.purchaserName = detail.purchaserName; // 名称
+        this.bill.taxpayerNumber = detail.taxpayerNumber; // 纳税人识别号
+        this.bill.taxpayerAddressOrId = detail.taxpayerAddressOrId; //买方电话地址
+        this.bill.taxpayerBankAccount = detail.taxpayerBankAccount; //买方银行账户
+        this.bill.salesName = detail.salesName; // 销方名称
+        this.bill.salesTaxpayerNum = detail.salesTaxpayerNum; // 销方纳税人识别号
+        this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount; // 销方银行账户
+        this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress; // 销方地址
 
-        this.bill.salesName = detail.salesName // 销方名称
-        this.bill.salesTaxpayerNum = detail.salesTaxpayerNum // 销方纳税人识别号
-        this.bill.salesTaxpayerBankAccount = detail.salesTaxpayerBankAccount // 销方银行账户
-        this.bill.salesTaxpayerAddress = detail.salesTaxpayerAddress // 销方地址
-
-        this.bill.totalTaxNum = detail.totalTaxNum
-        this.bill.totalTaxSum = detail.totalTaxSum
-        this.bill.totalAmount = detail.totalAmount
-        this.bill.invoiceRemarks = detail.invoiceRemarks
-        this.bill.detailData = detail.invoiceDetailData
+        this.bill.totalTaxNum = detail.totalTaxNum;
+        this.bill.totalTaxSum = detail.totalTaxSum;
+        this.bill.totalAmount = detail.totalAmount;
+        this.bill.invoiceRemarks = detail.invoiceRemarks;
+        this.bill.detailData = detail.invoiceDetailData;
       }
     },
     handleUserInfo() {
       if (this.$route.params.isHave) {
-        const data = this.$route.params.scanStr
-        console.log(data.fp_gsr)
-        if (data.fp_gsr) {
-          this.form.fp_gsr = data.fp_gsr
-          this.form.fp_gsbm = data.fp_gsbm
-          this.form.fp_bz = data.fp_bz
+        const data = this.$route.params.scanStr;
+        console.log(data.fp_gsr);
+        if (data.fp_gsbm) {
+          this.form.fp_gsr = data.fp_gsr;
+          this.form.fp_gsbm = data.fp_gsbm;
+          this.form.fp_bz = data.fp_bz == "undefined" ? '' : data.fp_bz
         }
       }
     },
     saveBill(formName) {
-      console.log(formName)
+      console.log(formName);
       // 判断是否空对象 console.log(Object.keys(this.billResJSON).length);
-      if (this.billResJSON == '' || this.billResJSON == undefined) {
-        this.$message.error('发票信息为空,请先验证发票')
-        return
+      if (this.billResJSON == "" || this.billResJSON == undefined) {
+        this.$message.error("发票信息为空,请先验证发票");
+        return;
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = Object.assign(
             this.form,
             { billInfo: this.billResJSON },
-            { uid: localStorage.getItem('userId') },
+            { uid: localStorage.getItem("userId") },
             dwbm
-          )
-          console.log(param)
-          queryData('/bill/saveBill', param, 'POST').then(res => {
+          );
+          console.log(param);
+          queryData("/bill/saveBill", param, "POST").then(res => {
             if (res.code == 0) {
-              this.$message.success('操作成功')
-              this.$router.go(-1)
+              this.$message.success("操作成功");
+              let _this = this;
+                setTimeout(function() {
+                  _this.$router.go(-1);
+                }, 600);
             } else {
-              this.$message.error(res.message)
+              this.$message.error(res.message);
             }
-          })
+          });
         }
-      })
+      });
     }
-
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -327,10 +348,10 @@ export default {
   padding: 10px;
   // min-width: 300px;
 }
-.el-select{
+.el-select {
   width: 80% !important;
 }
-.el-textarea{
+.el-textarea {
   width: 80% !important;
 }
 .toptitle {
@@ -343,7 +364,6 @@ export default {
     border-bottom: 6px double yellowgreen;
   }
   span {
-    color: red;
     display: inline-block;
   }
 }
@@ -351,13 +371,6 @@ export default {
   div,
   span {
     color: blue !important;
-  }
-  font-size: 16px;
-}
-.red {
-  div,
-  span {
-    color: red !important;
   }
   font-size: 16px;
 }

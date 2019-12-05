@@ -7,7 +7,7 @@
           <el-table-column prop="typeCount" label="统计张数" />
           <el-table-column prop="taxsum" label="金额合计" />
           <el-table-column prop="taxnum" label="税额合计" />
-          <el-table-column prop="amount3" label="合计" />
+          <el-table-column prop="total" label="合计" />
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="根据录入日期统计" name="entryDate">

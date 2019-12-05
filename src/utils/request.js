@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: 'http://localhost:3000', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 20000, // request timeout
+  timeout: 30000, // request timeout
   headers: {
     'content-type': 'application/json'
   }
@@ -30,6 +30,9 @@ service.interceptors.request.use(
   error => {
     // do something with request error
     console.log(error) // for debug
+    if(error.errError == 'timeout of 20000ms exceeded'){
+      error.errError = '请求超时，请刷新页面重试'
+    }
     return Promise.reject(error)
   }
 )
@@ -49,17 +52,9 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     console.log('返回结果', res)
-    if (res.data) {
-      if (res.data.error == 'token error') {
-        alert('登录超时，请重新登录')
-        router.replace('login')
-        // location.pathname = '#login'
-
-        // store.dispatch('user/resetToken').then(() => {
-        //   location.reload()
-        // })
-      }
-    }
+    // if (res.data) {
+      
+    // }
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 0) {
     //   Message({

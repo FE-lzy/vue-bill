@@ -59,6 +59,7 @@ export default {
         if (res.code == 0) {
           for (let i = 0; i < res.data.length; i++) {
             this.billType.push(res.data[i].type_name);
+
           }
         }
         console.log(this.billType);
@@ -85,13 +86,13 @@ export default {
           left: "center",
           bottom: "10",
           data: [
-            "增值税专票",
+            "增值税专用发票",
             "机动车销售统一发票",
             "增值税普通发票",
-            "电子发票",
-            "卷式普通发票",
-            "电子普通[通行费]发票",
-            "二手车统一发票"
+            "增值税电子普通发票",
+            "增值税普通发票(卷式)",
+            "增值税电子普通发票(通行费)",
+            "二手车销售统一发票"
           ]
         },
         series: [

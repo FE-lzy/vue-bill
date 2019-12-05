@@ -1,0 +1,22 @@
+@mixin flex($direction: row, $wrap: nowrap, $main: stretch, $cross: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+  justify-content: $main;
+  align-items: $cross;
+}
+// 面板
+@mixin panel(
+  $bgcolor: #fff,
+  $padding: 0,
+  $margin: 20px 0,
+  $height: 112px,
+  $txtPadding: 0 32px,
+  $color: #000,
+  $fontSize: 14px
+) {
+  background: $bgcolor;
+  padding: $padding;
+  margin: $margin;
+  height: $height;
+}

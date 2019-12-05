@@ -3,7 +3,6 @@
     <el-form
       ref="loginForm"
       :model="loginForm"
-      :rules="loginRules"
       class="login-form"
       autocomplete="on"
       label-position="left"
@@ -12,7 +11,12 @@
         <h3 class="title">发票管理系统登录</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item
+        prop="username"
+        :rules="[
+            { required: true, message: '请输入', trigger: 'blur' },
+          ]"
+      >
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
@@ -28,7 +32,12 @@
       </el-form-item>
 
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
+        <el-form-item
+          prop="password"
+          :rules="[
+            { required: true, message: '请输入', trigger: 'blur' },
+          ]"
+        >
           <span class="svg-container">
             <svg-icon icon-class="password" />
           </span>
@@ -57,8 +66,10 @@
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
       >登录</el-button>
-
     </el-form>
+    <div style="position:absolute;bottom:20px;right:20px;color:#fff;">
+      © 日照日科信息技术有限公司 版权所有
+    </div>
   </div>
 </template>
 
@@ -71,19 +82,14 @@ export default {
   name: "Login",
   components: { SocialSign },
   data() {
-    
     return {
       loginForm: {
         username: "",
         password: ""
       },
       loginRules: {
-        username: [
-          { required: true, trigger: "blur" }
-        ],
-        password: [
-          { required: true, trigger: "blur" }
-        ]
+        username: [{ required: true, trigger: "blur" }],
+        password: [{ required: true, trigger: "blur" }]
       },
       passwordType: "password",
       capsTooltip: false,
@@ -157,8 +163,8 @@ export default {
               });
               this.loading = false;
             })
-            .catch((err) => {
-              this.$message.error(err)
+            .catch(err => {
+              this.$message.error(err);
               this.loading = false;
             });
         } else {
@@ -175,24 +181,6 @@ export default {
         return acc;
       }, {});
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 };
 </script>

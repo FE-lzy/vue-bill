@@ -34,7 +34,7 @@
             label-width="120px"
             class="demo-ruleForm form-div"
           >
-            <!-- <el-form-item
+            <el-form-item
               label="发票类型"
               prop="invoiceCode"
               :rules="[
@@ -49,7 +49,7 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-            </el-form-item>-->
+            </el-form-item>
             <el-form-item
               label="发票代码"
               prop="invoiceCode"
@@ -85,21 +85,24 @@
             </el-form-item>
             <el-form-item
               label="校验码后六位"
+              prop="checkCode"
+              v-if="billType == 1 ? true : false"
               :rules="[
                 { required: true, message: '请输入', trigger: 'blur' },
               ]"
             >
               <el-input v-model="ruleForm.checkCode" placeholder="输入校验码后六位" />
             </el-form-item>
-            <!-- <el-form-item
+            <el-form-item
               label="税前金额"
+              prop="invoiceAmount"
               v-if="billType == 2 ? true : false"
               :rules="[
                   { required: true, message: '请输入', trigger: 'blur' },
                 ]"
             >
               <el-input v-model="ruleForm.invoiceAmount" placeholder="输入税前金额"></el-input>
-            </el-form-item>-->
+            </el-form-item>
             <el-form-item>
               <el-button
                 type="primary"
@@ -122,16 +125,16 @@ export default {
   data() {
     return {
       ruleForm: {
-        invoiceCode: "037001851107",
-        invoiceNumber: "00879927",
-        billTime: "2019-4-4",
+        invoiceCode: "",
+        invoiceNumber: "",
+        billTime: "",
         invoiceAmount: "",
-        checkCode: "440055"
+        checkCode: ""
       },
       fullscreenLoading: false,
       beginInter: true,
       scanStr: "",
-      billType: "",
+      billType: '1',
       billOptions: [
         {
           value: "1",
@@ -148,6 +151,9 @@ export default {
     this.$refs.scanStr.focus();
   },
   methods: {
+    getBillType(){
+        4400192130
+    },
     changeT(val) {
       console.log(val, this.beginInter);
       this.scanStr = val;
@@ -157,20 +163,43 @@ export default {
         this.fullscreenLoading = true;
         setTimeout(function() {
           _this.beginInter = true;
-          _this.fullscreenLoading = false;
+          // _this.fullscreenLoading = false;
           _this.scanQuery();
-        }, 600);
+        }, 800);
       }
+    },
+    // 扫码验证判断
+    scanQuery() {
+      if (this.scanStr) {
+        // 是否存在
+        this.fetchIsHave("scan");
+      }
+    },
+    // 手动查验
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.fullscreenLoading = true;
+          this.fetchIsHave("code");
+        } else {
+          return false;
+        }
+      });
     },
     // 判断是否录入
     fetchIsHave(type) {
-      console.log(type);
+      console.log(this.scanStr);
       const code =
+        type == "scan" ? this.scanStr.split(",")[2] : this.ruleForm.invoiceCode;
+      const number =
         type == "scan"
           ? this.scanStr.split(",")[3]
           : this.ruleForm.invoiceNumber;
-      console.log(code);
-      queryData("/bill/getBillInfo", { code: code }, "POST").then(res => {
+      queryData(
+        "/bill/getBillInfo",
+        { code: code, number: number },
+        "POST"
+      ).then(res => {
         console.log(res);
         if (res.code == 0) {
           this.choiceModel(
@@ -187,22 +216,8 @@ export default {
         }
       });
     },
-    getBillType(val) {
-      this.billType = val;
-    },
-    // 手动查验
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          console.log('----------',this.fullscreenLoading);
-          this.fullscreenLoading = true;
-          this.fetchIsHave("code");
-        } else {
-          return false;
-        }
-      });
-    },
-    // watch
+
+    // 手动
     queryByCode() {
       const token = localStorage.getItem("lsToken");
       const queryparam = Object.assign(this.ruleForm, dwbm, { token: token });
@@ -210,7 +225,18 @@ export default {
       const _this = this;
       queryData("/bill/queryBillByCode", queryparam, "post")
         .then(result => {
-          console.log("1232", result);
+          console.log(result);
+          if (
+            result.code == -1 &&
+            result.data &&
+            result.data.error == "token error"
+          ) {
+            queryData("/bill/getToken", {}, "POST").then(token => {
+              localStorage.removeItem("lsToken");
+              localStorage.setItem("lsToken", token.message);
+              this.queryByCode();
+            });
+          }
           if (result.code == 0) {
             _this.choiceModel(
               JSON.parse(result.data.invoiceResult).invoiceTypeCode,
@@ -218,22 +244,14 @@ export default {
               false
             );
           } else {
-            console.log(result.message);
             _this.fullscreenLoading = false;
             _this.$message.error(result.message);
           }
         })
         .catch(err => {
+          console.log("捕捉err", err);
           _this.fullscreenLoading = false;
-          _this.$message.error(err);
         });
-    },
-    // 扫码验证判断
-    scanQuery() {
-      if (this.scanStr) {
-        // 是否存在
-        this.fetchIsHave("scan");
-      }
     },
 
     // 根据扫码验证
@@ -242,30 +260,50 @@ export default {
         scanStr: this.scanStr,
         token: localStorage.getItem("lsToken")
       };
-      console.log("123");
-      queryData("/bill/queryBillByScan", queryparam, "post").then(res => {
-        console.log(res);
-        if (res.code == 0) {
-          if (res.data.resultCode == "1000") {
-            this.choiceModel(
-              JSON.parse(res.data.invoiceResult).invoiceTypeCode,
-              res.data.invoiceResult,
-              false
-            );
+      console.log(queryparam);
+      let _this = this;
+      queryData(
+        "/bill/queryBillByScan",
+        Object.assign(queryparam, dwbm),
+        "post"
+      )
+        .then(res => {
+          if (res) {
+            console.log(res);
+            if (res.code == -1 && res.data && res.data.error == "token error") {
+              queryData("/bill/getToken", {}, "POST").then(token => {
+                localStorage.removeItem("lsToken");
+                localStorage.setItem("lsToken", token.message);
+                this.queryByScan();
+              });
+            }
+          }
+          if (res.code == 0) {
+            if (res.data.resultCode == "1000") {
+              this.choiceModel(
+                JSON.parse(res.data.invoiceResult).invoiceTypeCode,
+                res.data.invoiceResult,
+                false
+              );
+            } else {
+              this.fullscreenLoading = false;
+              _this.scanStr = "";
+              _this.$message.error(res.message);
+            }
           } else {
             this.fullscreenLoading = false;
-            this.$message.error(res.message);
+            _this.scanStr = "";
+             _this.$message.error(res.message);
           }
-        } else {
+          
+        })
+        .catch(err => {
           this.fullscreenLoading = false;
-          this.$message.error(res.message);
-        }
-      });
+          console.log("扫码捕捉err", err);
+        });
     },
     // 选择模板
     choiceModel(billType, data, isHave) {
-      console.log('----------',this.fullscreenLoading);
-      
       this.fullscreenLoading = false;
       if (billType == "01" || billType == "04" || billType == "10") {
         this.$router.push({
@@ -317,6 +355,9 @@ export default {
   padding: 31px 40px 10px 20px;
   border-radius: 5px;
   background: #fff;
+}
+.el-select{
+  width: 100% !important;
 }
 .el-row {
   margin-bottom: 20px;
