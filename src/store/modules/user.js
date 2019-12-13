@@ -40,6 +40,7 @@ const actions = {
           console.log(res)
           commit('SET_TOKEN', res.data.uToken)
           setToken(res.data.uToken)
+          localStorage.setItem('uToken',res.data.uToke)
           localStorage.setItem('name', res.data.user.username)
           localStorage.setItem('userId', res.data.user.id)
           localStorage.setItem('dwbm', res.data.user.dwbm)
@@ -86,6 +87,7 @@ const actions = {
       // logout(state.token).then(() => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
+      localStorage.removeItem('uToken')   
       localStorage.removeItem('name')     
       localStorage.removeItem('userid')
       localStorage.removeItem('dwbm')

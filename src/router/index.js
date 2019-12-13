@@ -96,7 +96,7 @@ export const constantRoutes = [
         meta: { title: '通行证发票结果', icon: 'dashboard', affix: false }
       },
       {
-        path: 'iden_tntry',
+        path: 'iden_entry',
         component: () => import('@/views/entry/iden_entry'),
         name: '识别录入',
         meta: { title: '识别录入', icon: 'dashboard', affix: true }

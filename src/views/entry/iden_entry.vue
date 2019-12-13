@@ -1,26 +1,26 @@
 <template>
   <div>
-      <div class="iden-panel">
-          <el-upload
-            class="upload-demo"
-            drag
-            action="https://jsonplaceholder.typicode.com/posts/"
-            multiple
-          >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将文件拖到此处，或
-              <em>点击上传</em>
-            </div>
-            <div class="el-upload__text" style="padding-top:5px;">
-              请上传清晰无遮挡图像</div>
-            <div class="el-upload__tip" slot="tip"><el-button type="primary">拍照上传</el-button></div>
-          </el-upload>
-          <div style="width:40%">
-            本次上传 4 张
-          </div>
-      </div>
+    <div class="iden-panel">
+      <el-upload
+        class="upload-demo"
+        drag
+        :headers="userToken"
+        action="http://localhost:3000/scan/upload"
+        multiple
+      >
+        <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__text" style="padding-top:5px;">请上传清晰无遮挡图像</div>
+        <div class="el-upload__tip" slot="tip">
+          <el-button type="primary">拍照上传</el-button>
+        </div>
+      </el-upload>
+      <div style="width:40%">本次上传 4 张</div>
+    </div>
     <div style="background:#fff;padding:20px;">
       <el-form :inline="true" :model="formInline" class="demo-form-inline search-input">
         <el-form-item label="审批人">
@@ -38,6 +38,7 @@
   </div>
 </template>
 <script>
+import { getToken } from "@/utils/auth";
 export default {
   name: "iden_enery",
   data() {
@@ -67,7 +68,10 @@ export default {
           name: "王小虎",
           address: "上海市普陀区金沙江路 1516 弄"
         }
-      ]
+      ],
+      userToken: {
+        authorization: "Bearer " + getToken()
+      }
     };
   },
   mounted() {
@@ -88,7 +92,7 @@ export default {
 </script>
 
 <style lang="scss">
-.iden-panel{
+.iden-panel {
   padding: 10px;
   display: flex;
   justify-content: space-between;
