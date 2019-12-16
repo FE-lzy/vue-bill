@@ -258,7 +258,7 @@
             { required: true, message: '请输入', trigger: 'blur' },
           ]"
         >
-          <el-select v-model="form.fp_gsbm" filterable placeholder="所在部门" :disabled="isHave">
+          <el-select v-model="form.fp_gsbm" filterable placeholder="所在部门" @change="getAllUser" :disabled="isHave">
             <el-option
               v-for="item in bmOptions"
               :key="item.id"

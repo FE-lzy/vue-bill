@@ -4,8 +4,11 @@
       <el-upload
         class="upload-demo"
         drag
+        :limit="1"
         :headers="userToken"
         action="http://localhost:3000/scan/upload"
+        :before-upload="beforeUpload"
+        :on-success="onSuccess"
         multiple
       >
         <img v-if="imageUrl" :src="imageUrl" class="avatar" />
@@ -20,6 +23,10 @@
         </div>
       </el-upload>
       <div style="width:40%">本次上传 4 张</div>
+      <img ref="img" alt="">
+      <el-dialog title="查询结果" :visible.sync="resultVisible" width="50%">
+        <scan-data :data="imgData" :img="imgUrl" />
+      </el-dialog>
     </div>
     <div style="background:#fff;padding:20px;">
       <el-form :inline="true" :model="formInline" class="demo-form-inline search-input">
@@ -39,11 +46,18 @@
 </template>
 <script>
 import { getToken } from "@/utils/auth";
+import scanData from "./model/scanData";
 export default {
   name: "iden_enery",
+  components: {
+    scanData
+  },
   data() {
     return {
       imageUrl: "",
+      resultVisible: false,
+      imgData: [],
+      imgUrl:'',
       formInline: {
         user: ""
       },
@@ -79,13 +93,43 @@ export default {
     let width = (`${document.documentElement.clientWidth}` - 300) / 2 + "px";
     console.log(this.$el.getElementsByClassName("el-upload-dragger")[0]);
     this.$el.getElementsByClassName("el-upload-dragger")[0].style.width = width;
+    this.$refs.img.src="http:localhost:3000/upload/1576306755480-815.jpg"
   },
   methods: {
+    closeDialog() {
+      this.resultVisible = false;
+    },
     onSubmit() {
       console.log("124");
     },
+    onSuccess(response, file, fileList) {
+      if (response.code == 0) {
+        this.imgData = response.data.data.ret;
+        this.imgUrl = 'http://localhost:3000/' + response.data.image;
+        // this.imageUrl = response.data.image;
+        this.resultVisible = true;
+      }
+      console.log(response, file, fileList);
+    },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeUpload(file) {
+      console.log(file.type);
+      const isLt4M = file.size / 1024 / 1024 < 4;
+      const isJPG =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "image/bmp";
+
+      if (!isJPG) {
+        this.$message.error("上传图片只能是 JPG/PNG/JPEG/BMP 格式!");
+        this.imageUrl = "";
+      }
+      if (!isLt4M) {
+        this.$message.error("上传图片大小不能超过 4MB!");
+      }
+      return isJPG && isLt4M;
     }
   }
 };
