@@ -23,8 +23,8 @@
         </div>
       </el-upload>
       <div style="width:40%">本次上传 4 张</div>
-      <img ref="img" alt="">
-      <el-dialog title="查询结果" :visible.sync="resultVisible" width="50%">
+      <img ref="img" alt />
+      <el-dialog title="查询结果" :visible.sync="resultVisible" width="60%">
         <scan-data :data="imgData" :img="imgUrl" />
       </el-dialog>
     </div>
@@ -57,7 +57,7 @@ export default {
       imageUrl: "",
       resultVisible: false,
       imgData: [],
-      imgUrl:'',
+      imgUrl: "",
       formInline: {
         user: ""
       },
@@ -93,7 +93,7 @@ export default {
     let width = (`${document.documentElement.clientWidth}` - 300) / 2 + "px";
     console.log(this.$el.getElementsByClassName("el-upload-dragger")[0]);
     this.$el.getElementsByClassName("el-upload-dragger")[0].style.width = width;
-    this.$refs.img.src="http:localhost:3000/upload/1576306755480-815.jpg"
+    this.$refs.img.src = "http:localhost:3000/upload/1576306755480-815.jpg";
   },
   methods: {
     closeDialog() {
@@ -104,8 +104,19 @@ export default {
     },
     onSuccess(response, file, fileList) {
       if (response.code == 0) {
-        this.imgData = response.data.data.ret;
-        this.imgUrl = 'http://localhost:3000/' + response.data.image;
+        let val = response.data.data.ret;
+        console.log(val);
+        let newdata = [];
+        let newArr = {};
+        for (let i = 0; i < val.length; i++) {
+          val[i].ret.map(j => {
+            newArr[j.word_name] = j.word;
+          });
+          newArr.position = JSON.parse(val[i].receiptCoordinate);
+          newdata[i] = newArr
+        }
+        this.imgData = newdata;
+        this.imgUrl = "http://localhost:3000/" + response.data.image;
         // this.imageUrl = response.data.image;
         this.resultVisible = true;
       }

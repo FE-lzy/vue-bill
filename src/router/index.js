@@ -100,6 +100,12 @@ export const constantRoutes = [
         component: () => import('@/views/entry/iden_entry'),
         name: '识别录入',
         meta: { title: '识别录入', icon: 'dashboard', affix: true }
+      },
+      {
+        path: 'operationImg',
+        component: () => import('@/views/entry/model/operationImg'),
+        name: '图片处理',
+        meta: { title: '图片处理', icon: 'dashboard', affix: true }
       }
       // {
       //   path: 'other',
