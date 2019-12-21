@@ -106,6 +106,13 @@ export const constantRoutes = [
         component: () => import('@/views/entry/model/operationImg'),
         name: '图片处理',
         meta: { title: '图片处理', icon: 'dashboard', affix: true }
+      },
+      {
+        path: 'scanData',
+        component: () => import('@/views/entry/model/scanData'),
+        // hidde
+        name: '查验结果',
+        meta: { title: '查验结果', icon: 'dashboard', affix: true }
       }
       // {
       //   path: 'other',

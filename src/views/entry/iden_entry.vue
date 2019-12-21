@@ -24,9 +24,9 @@
       </el-upload>
       <div style="width:40%">本次上传 4 张</div>
       <img ref="img" alt />
-      <el-dialog title="查询结果" :visible.sync="resultVisible" width="60%">
+      <!-- <el-dialog title="查询结果" :visible.sync="resultVisible" width="60%">
         <scan-data :data="imgData" :img="imgUrl" />
-      </el-dialog>
+      </el-dialog>-->
     </div>
     <div style="background:#fff;padding:20px;">
       <el-form :inline="true" :model="formInline" class="demo-form-inline search-input">
@@ -47,6 +47,7 @@
 <script>
 import { getToken } from "@/utils/auth";
 import scanData from "./model/scanData";
+let newdata = [];
 export default {
   name: "iden_enery",
   components: {
@@ -89,6 +90,7 @@ export default {
     };
   },
   mounted() {
+    console.log(this.$refs);
     console.log(this.$el.getElementsByClassName("el-upload-dragger"));
     let width = (`${document.documentElement.clientWidth}` - 300) / 2 + "px";
     console.log(this.$el.getElementsByClassName("el-upload-dragger")[0]);
@@ -105,20 +107,31 @@ export default {
     onSuccess(response, file, fileList) {
       if (response.code == 0) {
         let val = response.data.data.ret;
-        console.log(val);
-        let newdata = [];
+        // console.log(val);
+
         let newArr = {};
         for (let i = 0; i < val.length; i++) {
+          console.log("第一步", i);
           val[i].ret.map(j => {
+            console.log("第二步", j);
+            console.log(j, j.word_name, j.word);
             newArr[j.word_name] = j.word;
           });
+          console.log("第三步", newArr);
           newArr.position = JSON.parse(val[i].receiptCoordinate);
-          newdata[i] = newArr
+          console.log("第四步", newArr);
+          newdata[i] = newArr;
+          console.log("第五步", newdata);
         }
         this.imgData = newdata;
+        console.log(this.imgData);
         this.imgUrl = "http://localhost:3000/" + response.data.image;
         // this.imageUrl = response.data.image;
-        this.resultVisible = true;
+        // this.resultVisible = true;
+        this.$router.push({
+          path: "scanData",
+          query: { imgUrl: this.imgUrl, imgData: this.imgData }
+        });
       }
       console.log(response, file, fileList);
     },
