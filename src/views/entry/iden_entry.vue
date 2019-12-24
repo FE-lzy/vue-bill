@@ -106,34 +106,15 @@ export default {
     },
     onSuccess(response, file, fileList) {
       if (response.code == 0) {
+        console.log('得到结果 ',response);
         let val = response.data.data.ret;
-        // console.log(val);
-
-        let newArr = {};
-        for (let i = 0; i < val.length; i++) {
-          console.log("第一步", i);
-          val[i].ret.map(j => {
-            console.log("第二步", j);
-            console.log(j, j.word_name, j.word);
-            newArr[j.word_name] = j.word;
-          });
-          console.log("第三步", newArr);
-          newArr.position = JSON.parse(val[i].receiptCoordinate);
-          console.log("第四步", newArr);
-          newdata[i] = newArr;
-          console.log("第五步", newdata);
-        }
-        this.imgData = newdata;
-        console.log(this.imgData);
         this.imgUrl = "http://localhost:3000/" + response.data.image;
-        // this.imageUrl = response.data.image;
-        // this.resultVisible = true;
+        this.imageUrl = response.data.image;
         this.$router.push({
-          path: "scanData",
-          query: { imgUrl: this.imgUrl, imgData: this.imgData }
+          name: "查验结果",
+          params: { imgUrl: this.imgUrl, imgData: response.data.data.ret }
         });
       }
-      console.log(response, file, fileList);
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);

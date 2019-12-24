@@ -1,40 +1,92 @@
 <template>
-  <div>
+  <div class="container">
     <el-carousel :height="height" indicator-position="outside" arrow="always" :autoplay="false">
-      <el-carousel-item v-for="(item,i) in 2" :key="i">
-        <div>
-          <opration-img :ref="`hello${i}`" :imgUrl="imgUrl" :imgData="imgData"></opration-img>
+      <el-carousel-item v-for="(i,k) in imgData" :key="k">
+        <div class="imgsome">
+          <img :style="{width:imgwidth + 'px',height:'100%'}" :src="i.imgsrc" />
+          <div
+            class="imgborder"
+            :style="{left:i.left+'px',top:i.top+'px',width:i.width+'px',height:i.height+'px'}"
+          ></div>
         </div>
       </el-carousel-item>
     </el-carousel>
   </div>
 </template>
 <script>
+const imgwidth = "500"; //缩放后的宽度
 import oprationImg from "./operationImg";
-import { watch } from "fs";
 export default {
   name: "scanData",
   data() {
     return {
       height: `${document.documentElement.clientHeight}` + "px",
       imgUrl: "",
-      imgData: []
+      imgData: [],
+      imgInfo: {}, // 存图片的宽高信息
+      scaling: 1, //缩放比例
+      borderInfo: [],
+      imgwidth: imgwidth
     };
   },
   components: {
     oprationImg
   },
   mounted() {
-    console.log("234324", this.$refs);
-    this.imgUrl = this.$route.query.imgUrl;
-    this.imgData = this.$route.query.imgData;
+    // 获取图片地址和图片信息
+    // console.log(this.$route.params);
+    this.imgUrl = this.$route.params.imgUrl;
+    this.imgData = this.$route.params.imgData;
+    if (!this.imgUrl || !this.imgData) {
+      this.$router.go(-1);
+    }
+    this.handleData();
   },
+  methods: {
+    handleData() {
+      let val = this.$route.params.imgData;
+      console.log(val);
+      if (val.length > 0) {
+        for (let i = 0; i < val.length; i++) {
+          let ret = val[i].ret;
+          // console.log(2, ret);
+          ret.map(j => {
+            val[i][j.word_name] = j.word;
+          });
+          val[i].position = JSON.parse(val[i].receiptCoordinate);
+        }
+        this.getImgInfo(this.imgUrl, val);
+      }
+      this.imgData = val;
+    },
 
-  watch: {
-    imgData: function(val) {
-      console.log('imgUrl',val);
-      this.$refs.hello0[0].getImgInfo(this.imgUrl,this.imgData[0].position);
-      this.$refs.hello1[0].getImgInfo(this.imgUrl,this.imgData[1].position);
+    // 修改图片尺寸
+    getImgInfo(imgUrl, imgData) {
+      console.log(imgData.length);
+      const vm = this;
+      let img = new Image();
+      // console.log("图片地址 ", imgUrl, JSON.stringify(imgData));
+      img.src = imgUrl;
+      img.onload = function() {
+        // let imgData = this.imgData;
+        for (let i = 0; i < imgData.length; i++) {
+          // console.log("图片宽度", img.width);
+          vm.$set(vm.imgInfo, "imgsrc", imgUrl);
+          vm.scaling = img.width / imgwidth; // 缩放比例
+          console.log(imgData[i]);
+          vm.$set(vm.imgInfo, "width", (imgData[i].width / vm.scaling).toFixed(1));
+          vm.$set(vm.imgInfo, "left", (imgData[i].left / vm.scaling).toFixed(1));
+          vm.$set(vm.imgInfo, "top", (imgData[i].top / vm.scaling).toFixed(1));
+          vm.$set(
+            vm.imgInfo,
+            "height",
+            (imgData[i].height / vm.scaling).toFixed(1)
+          );
+          // console.log("第", i, "个值是：", vm.imgInfo[i]);
+          vm.imgData[i] = vm.imgInfo;
+          console.log(vm.imgData);
+        }
+      };
     }
   }
 };
@@ -61,5 +113,11 @@ export default {
   &:hover {
     background-color: rgba(27, 45, 116, 7.11);
   }
+}
+.imgborder {
+  width: 100%;
+  color: green;
+  border: 5px solid #333;
+  position: absolute;
 }
 </style>
