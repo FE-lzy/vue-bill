@@ -32,29 +32,32 @@ export default {
   components: {
     oprationImg
   },
-  mounted() {
+  created() {
     // 获取图片地址和图片信息
     // console.log(this.$route.params);
     this.imgUrl = this.$route.params.imgUrl;
     this.imgData = this.$route.params.imgData;
+    console.log('获取到的参数',this.$route.params.imgData);
     if (!this.imgUrl || !this.imgData) {
       this.$router.go(-1);
     }
-    this.handleData();
+    // this.handleData();
   },
   methods: {
     handleData() {
-      let val = this.$route.params.imgData;
-      console.log(val);
+      let val = this.imgData;
+      console.log('val',val);
       if (val.length > 0) {
         for (let i = 0; i < val.length; i++) {
           let ret = val[i].ret;
-          // console.log(2, ret);
-          ret.map(j => {
-            val[i][j.word_name] = j.word;
-          });
+        
+          for(let j=0;j<ret.length;j++){
+            // console.log('发票信息：',ret);
+            val[i][ret[j].word_name] = ret[j].word
+          }
           val[i].position = JSON.parse(val[i].receiptCoordinate);
         }
+        console.log('处理后的val',val);
         this.getImgInfo(this.imgUrl, val);
       }
       this.imgData = val;
